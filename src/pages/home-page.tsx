@@ -112,7 +112,7 @@ export function HomePage() {
             </h2>
           </div>
           <p className="max-w-2xl self-end text-lg leading-relaxed text-neutral-600">
-            GraphINO transforma detecciones aisladas en información útil para que vehículos
+            Thalos transforma detecciones aisladas en información útil para que vehículos
             autónomos y operadores comprendan lo que ocurre alrededor de cada unidad.
           </p>
         </div>

@@ -77,7 +77,7 @@ export function SolutionPage() {
       <section className="border-b border-black/10 bg-[#121212] text-white">
         <div className="dot-grid mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <p className="text-xs font-medium tracking-[0.2em] text-white/45">
-            ARQUITECTURA GRAPHINO
+            ARQUITECTURA THALOS
           </p>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
             <h1 className="max-w-3xl text-5xl font-medium leading-[1] tracking-[-0.06em] sm:text-7xl">
