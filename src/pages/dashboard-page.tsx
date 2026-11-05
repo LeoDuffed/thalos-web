@@ -1,241 +1,114 @@
-import { useState } from "react"
-import {
-  AlertTriangle,
-  ArrowRight,
-  BatteryCharging,
-  Bot,
-  CheckCircle2,
-  Clock3,
-  Factory,
-  Radar,
-  Users,
-  Wifi,
-} from "lucide-react"
+import { useEffect, useState } from "react"
+import { Activity, ArrowDownToLine, ArrowRight, Clock3, Database, LocateFixed, Radio, RefreshCw, Signal, Target, Wifi } from "lucide-react"
+import { RadarView } from "@/components/radar-view"
+import { targetColors } from "@/lib/radar-colors"
+import { useTelemetry } from "@/hooks/use-telemetry"
+import { ageLabel, formatTime, getReadingState } from "@/lib/telemetry"
 
-type MachineStatus = "operando" | "paro-solicitado" | "paro-confirmado"
-type ZoneId = "A" | "B" | "C" | "D"
-
-type Detection = {
-  robotId: string
-  classification: string
-  confidence: number
-  distance: string
-  direction: string
-  time: string
+function ConnectionBadge({ label, value, tone }: { label: string; value: string; tone: "good" | "waiting" | "warning" }) {
+  const styles = tone === "good" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : tone === "warning" ? "border-amber-200 bg-amber-50 text-amber-900" : "border-black/10 bg-neutral-50 text-neutral-500"
+  return <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] ${styles}`}><span className={`size-1.5 rounded-full ${tone === "good" ? "bg-emerald-600" : tone === "warning" ? "bg-amber-500" : "bg-neutral-400"}`} /><span className="font-medium">{label}</span><span>{value}</span></span>
 }
 
-type Zone = {
-  id: ZoneId
-  machine: string
-  status: MachineStatus
-  robots: string[]
-  people: number
-  detection?: Detection
-}
-
-const zones: Zone[] = [
-  {
-    id: "A",
-    machine: "Equipo A",
-    status: "paro-confirmado",
-    robots: ["Rb-01"],
-    people: 1,
-    detection: {
-      robotId: "Rb-01",
-      classification: "Posible humano",
-      confidence: 92,
-      distance: "3.8 m",
-      direction: "Frente derecha",
-      time: "013:23:58",
-    },
-  },
-  { id: "B", machine: "Equipo B", status: "operando", robots: ["Rb-02"], people: 0 },
-  { id: "C", machine: "Equipo C", status: "operando", robots: ["Rb-03"], people: 0 },
-  {
-    id: "D",
-    machine: "Equipo D",
-    status: "paro-confirmado",
-    robots: ["Rb-04"],
-    people: 1,
-    detection: {
-      robotId: "Rb-04",
-      classification: "Posible humano",
-      confidence: 87,
-      distance: "4.6 m",
-      direction: "Lado izquierdo",
-      time: "013:24:12",
-    },
-  },
-]
-
-const robots = [
-  { id: "Rb-01", zone: "A" as ZoneId, battery: 84, lastReport: "13:24:08" },
-  { id: "Rb-02", zone: "B" as ZoneId, battery: 71, lastReport: "13:24:11" },
-  { id: "Rb-03", zone: "C" as ZoneId, battery: 93, lastReport: "13:24:13" },
-  { id: "Rb-04", zone: "D" as ZoneId, battery: 58, lastReport: "13:24:09" },
-]
-
-const events = [
-  { time: "13:24:14", zone: "D", origin: "Equipo D", event: "Paro confirmado", detail: "Respuesta recibida", important: false },
-  { time: "13:24:12", zone: "D", origin: "Rb-04", event: "Posible humano", detail: "4.6 m · confianza 87%", important: false },
-  { time: "13:24:10", zone: "C", origin: "Rb-03", event: "Objeto detectado", detail: "Sin solicitud de paro", important: false },
-  { time: "13:24:00", zone: "A", origin: "Equipo A", event: "Paro confirmado", detail: "Respuesta recibida", important: false },
-  { time: "13:23:58", zone: "A", origin: "Rb-01", event: "Posible humano", detail: "3.8 m · confianza 92%", important: false },
-  { time: "13:21:30", zone: "B", origin: "Rb-02", event: "Objeto detectado", detail: "Sin solicitud de paro", important: false },
-  { time: "13:20:41", zone: "C", origin: "Rb-03", event: "Objeto detectado", detail: "Sin solicitud de paro", important: false },
-]
-
-const statusLabels: Record<MachineStatus, string> = {
-  operando: "Operando",
-  "paro-solicitado": "Paro solicitado",
-  "paro-confirmado": "Paro confirmado",
-}
-
-function MachineStatusTag({ status, dark = false }: { status: MachineStatus; dark?: boolean }) {
-  const style = dark
-    ? status === "paro-solicitado"
-      ? "bg-white text-black"
-      : status === "paro-confirmado"
-        ? "border border-white/50 bg-white/10 text-white"
-        : "border border-white/15 bg-white/5 text-white/55"
-    : status === "paro-solicitado"
-      ? "bg-black text-white"
-      : status === "paro-confirmado"
-        ? "border border-black/25 bg-[#DCDCDC]/55 text-black"
-        : "border border-black/10 bg-white text-neutral-500"
-
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium ${style}`}>{statusLabels[status]}</span>
-}
-
-function ZoneCard({ zone, selected, onSelect }: { zone: Zone; selected: boolean; onSelect: () => void }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={selected}
-      aria-label={`Zona ${zone.id}, ${zone.machine}, ${statusLabels[zone.status]}, ${zone.people} ${zone.people === 1 ? "posible persona" : "posibles personas"}`}
-      onClick={onSelect}
-      className={`group flex min-h-[178px] flex-col rounded-xl border p-5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
-        selected ? "border-white bg-white/12" : "border-white/10 bg-white/[0.035] hover:border-white/40 hover:bg-white/[0.07]"
-      }`}
-    >
-      <div className="flex w-full items-start justify-between gap-3">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45">Zona {zone.id}</p>
-          <h3 className="mt-2 text-lg font-medium text-white">{zone.machine}</h3>
-        </div>
-        <Factory className="size-5 shrink-0 text-white/45" aria-hidden="true" />
-      </div>
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-6">
-        <div>
-          <MachineStatusTag status={zone.status} dark />
-          <p className="mt-3 text-xs text-white/55">
-            {zone.people > 0 ? `${zone.people} posible persona · ${zone.robots.join(", ")}` : `Sin presencia reportada · ${zone.robots.join(", ")}`}
-          </p>
-        </div>
-        <ArrowRight className={`size-4 shrink-0 transition-transform group-hover:translate-x-1 ${selected ? "text-white" : "text-white/35"}`} aria-hidden="true" />
-      </div>
-    </button>
-  )
-}
+function signed(value: number, decimals = 2) { return `${value > 0 ? "+" : ""}${value.toFixed(decimals)}` }
 
 export function DashboardPage() {
-  const [selectedZoneId, setSelectedZoneId] = useState<ZoneId>("C")
-  const selectedZone = zones.find((zone) => zone.id === selectedZoneId) ?? zones[0]
-  const peopleInRiskZones = zones.reduce((total, zone) => total + zone.people, 0)
-  const stoppedMachines = zones.filter((zone) => zone.status === "paro-confirmado").length
-  const pendingStops = zones.filter((zone) => zone.status === "paro-solicitado").length
+  const { deviceId, status, reading, events, activity, loaded, connected, error, serverOffset, retry } = useTelemetry()
+  const [clock, setClock] = useState(() => Date.now())
+  const [selectedSlot, setSelectedSlot] = useState(1)
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(Date.now()), 1_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
-  const metrics = [
-    { icon: Users, label: "Personas en zonas de riesgo", value: String(peopleInRiskZones).padStart(2, "0"), detail: "Estimación de la simulación" },
-    { icon: CheckCircle2, label: "Paros confirmados", value: String(stoppedMachines).padStart(2, "0"), detail: "Respuesta recibida del equipo" },
-    { icon: AlertTriangle, label: "Paros sin confirmar", value: String(pendingStops).padStart(2, "0"), detail: "Requiere seguimiento" },
-    { icon: Bot, label: "Robots conectados", value: `${robots.length}/${robots.length}`, detail: "Último reporte registrado" },
+  const now = clock + serverOffset
+  const online = connected && loaded && !error
+  const { espOnline, current, sensorOnline } = getReadingState(reading, status, now, online)
+  const targets = reading?.valid ? reading.targets : []
+  const selected = targets.find((target) => target.slot === selectedSlot) ?? targets[0] ?? null
+  const nearest = targets.length ? Math.min(...targets.map((target) => target.distanceM)) : null
+  const simulated = reading?.source === "simulated"
+  const firebaseLabel = error ? "Error" : !loaded ? "Conectando" : connected ? "Conectado" : "Sin conexión"
+  const sensorLabel = reading && !reading.valid ? "Lectura incompleta" : simulated ? "Datos de prueba" : sensorOnline ? "Recibiendo" : reading ? "Sin datos vigentes" : "Esperando lectura"
+  const sourceLabel = simulated ? "DATOS SIMULADOS" : reading?.source === "sensor" ? "ORIGEN: SENSOR" : "ESPERANDO DATOS REALES"
+  const summary = [
+    { icon: Target, label: "Objetivos detectados", value: current ? String(targets.length).padStart(2, "0") : "—", unit: current ? "/ 3" : "", detail: current ? simulated ? "Lectura de prueba" : "En la última lectura vigente" : "Esperando una lectura vigente" },
+    { icon: LocateFixed, label: "Objetivo más cercano", value: current && nearest !== null ? nearest.toFixed(2) : "—", unit: current && nearest !== null ? "m" : "", detail: "Distancia calculada con X e Y" },
+    { icon: Clock3, label: "Última lectura", value: reading?.updatedAt ? formatTime(reading.updatedAt) : "—", unit: "", detail: ageLabel(reading?.updatedAt ?? null, now) },
+    { icon: Activity, label: "Número de muestra", value: reading?.valid ? `#${reading.sequence}` : "—", unit: "", detail: "Secuencia enviada por el dispositivo" },
   ]
+  const timeline = [...events, ...activity].sort((a, b) => b.timestamp - a.timestamp).slice(0, 10)
 
   return (
-    <div className="bg-[#f6f6f6]">
+    <div className="min-h-screen bg-[#f6f6f6] pb-10">
       <section className="border-b border-black/10 bg-white">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-5 py-8 lg:flex-row lg:items-end lg:justify-between lg:px-8">
-          <div>
-            <p className="flex items-center gap-2 text-xs font-medium tracking-[0.16em] text-neutral-500">
-              <span className="size-2 rounded-full bg-black" /> SIMULACIÓN · DATOS DE EJEMPLO
-            </p>
-            <h1 className="mt-3 text-3xl font-medium tracking-[-0.045em] sm:text-4xl">Centro de control</h1>
-            <p className="mt-2 text-sm text-neutral-500">Supervisión de detecciones, zonas de riesgo y respuesta de maquinaria.</p>
+        <div className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8 lg:py-10">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.17em] text-neutral-500"><Radio className="size-3.5" aria-hidden="true" /> Robot 01 · HLK-LD2450</p>
+            <span className={`rounded-md border px-2.5 py-1 font-mono text-[10px] tracking-wider ${simulated ? "border-amber-200 bg-amber-50 text-amber-800" : "border-black/10 bg-neutral-50 text-neutral-500"}`}>{sourceLabel}</span>
+          </div>
+          <h1 className="mt-4 text-3xl font-medium tracking-[-0.045em] sm:text-4xl">Centro de control</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-500">Posición y velocidad de los objetivos reportados por el radar. Primera prueba con el robot fijo.</p>
+          <div className="mt-6 flex flex-wrap gap-2" aria-label="Estado de las conexiones" aria-live="polite">
+            <ConnectionBadge label="Firebase" value={firebaseLabel} tone={online ? "good" : error ? "warning" : "waiting"} />
+            <ConnectionBadge label="ESP32" value={espOnline ? "Con reporte vigente" : "Sin reporte reciente"} tone={espOnline ? "good" : "waiting"} />
+            <ConnectionBadge label="Radar" value={sensorLabel} tone={sensorOnline ? "good" : simulated || (reading && !reading.valid) ? "warning" : "waiting"} />
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1500px] space-y-5 px-5 py-6 lg:px-8">
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de la simulación">
-          {metrics.map(({ icon: Icon, label, value, detail }) => (
-            <article className="rounded-2xl border border-black/10 bg-white p-5" key={label}>
-              <div className="flex items-start justify-between gap-3 text-neutral-500"><span className="text-xs">{label}</span><Icon className="size-4 shrink-0" aria-hidden="true" /></div>
-              <p className="mt-5 text-3xl font-medium tracking-[-0.05em] tabular-nums">{value}</p>
-              <p className="mt-1 text-xs text-neutral-400">{detail}</p>
-            </article>
-          ))}
+      <div className="mx-auto max-w-[1440px] space-y-5 px-5 pt-6 lg:px-8">
+        {error ? <div role="alert" className="flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 sm:flex-row sm:items-center"><p>{error}</p><button type="button" onClick={retry} className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs font-medium text-white"><RefreshCw className="size-3.5" />Reintentar</button></div>
+          : !loaded ? <p role="status" className="rounded-xl border border-black/10 bg-white p-4 text-sm text-neutral-500">Conectando y leyendo la telemetría…</p>
+          : !connected ? <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">Sin conexión con Firebase. Los datos que permanezcan visibles corresponden a la última lectura recibida.</p>
+          : reading?.issue ? <p role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">{reading.issue} El estado de la detección queda pendiente.</p>
+          : !reading ? <p role="status" className="rounded-xl border border-black/10 bg-white p-4 text-sm text-neutral-600">Firebase está conectado. Todavía no hay lecturas del HLK-LD2450 para este robot.</p>
+          : simulated ? <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">Estos datos son un ejemplo simulado. La conexión con el sensor físico todavía está pendiente.</p>
+          : !current ? <p role="status" className="rounded-xl border border-black/10 bg-white p-4 text-sm text-neutral-600">Sin lectura vigente del sensor o sin reporte reciente de la ESP32. El gráfico y la tabla conservan la última muestra como referencia.</p>
+          : null}
+
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen del radar">
+          {summary.map(({ icon: Icon, label, value, unit, detail }) => <article key={label} className="rounded-2xl border border-black/10 bg-white p-5"><div className="flex items-center justify-between gap-3 text-neutral-500"><p className="text-xs">{label}</p><Icon className="size-4 shrink-0" aria-hidden="true" /></div><p className="mt-5 font-mono text-3xl font-medium tracking-[-0.06em] tabular-nums">{value}<span className="ml-2 text-sm font-normal tracking-normal text-neutral-400">{unit}</span></p><p className="mt-2 text-[11px] text-neutral-400">{detail}</p></article>)}
         </section>
 
-        <section className="grid gap-5 xl:grid-cols-[1.55fr_.85fr]">
-          <div className="overflow-hidden rounded-2xl border border-black/10 bg-[#121212] text-white">
-            <div className="flex flex-col gap-3 border-b border-white/10 px-5 py-5 sm:flex-row sm:items-start sm:justify-between">
-              <div><h2 className="text-base font-medium">Planta por zonas</h2></div>
-              <span className="self-start rounded-md border border-white/15 px-2.5 py-1 font-mono text-[10px] text-white/55">PLANTA A · DEMO</span>
+        <div className="grid items-stretch gap-5 lg:grid-cols-[1.65fr_1fr]">
+          <RadarView targets={targets} selectedSlot={selected?.slot ?? null} current={current} onSelect={setSelectedSlot} />
+          <aside className="flex flex-col rounded-2xl border border-black/10 bg-white p-5 sm:p-6" aria-label="Detalle del objetivo seleccionado">
+            <p className="text-[10px] font-medium uppercase tracking-[0.17em] text-neutral-400">Detalle de la lectura</p>
+            <h2 className="mt-2 text-xl font-medium tracking-[-0.035em]">Objetivo seleccionado</h2>
+            <div className="mt-5 grid grid-cols-3 gap-2" aria-label="Seleccionar objetivo">
+              {[1, 2, 3].map((slot) => {
+                const present = targets.some((target) => target.slot === slot)
+                return <button key={slot} type="button" disabled={!present} aria-pressed={selected?.slot === slot} onClick={() => setSelectedSlot(slot)} className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-default disabled:text-neutral-300 ${selected?.slot === slot ? "border-black bg-neutral-50" : "border-black/10"}`}><span className="size-2 rounded-full" style={{ backgroundColor: present ? targetColors[slot - 1] : "#e5e5e5" }} />T{slot}</button>
+              })}
             </div>
-            <div className="factory-grid p-4 sm:p-6">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {zones.map((zone) => <ZoneCard key={zone.id} zone={zone} selected={zone.id === selectedZoneId} onSelect={() => setSelectedZoneId(zone.id)} />)}
-              </div>
-              <p className="mt-5 text-xs leading-relaxed text-white/45">Selecciona una zona para ver su detección y el estado reportado por la maquinaria. La distancia y orientación son relativas al carrito.</p>
-            </div>
-          </div>
-
-          <aside className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6" aria-live="polite">
-            <div className="flex items-start justify-between gap-3"><div><p className="text-[11px] font-medium uppercase tracking-[0.15em] text-neutral-400">Detalle de zona</p><h2 className="mt-2 text-2xl font-medium tracking-[-0.04em]">Zona {selectedZone.id}</h2><p className="mt-1 text-sm text-neutral-500">{selectedZone.machine}</p></div><Factory className="size-5 text-neutral-400" aria-hidden="true" /></div>
-
-            <div className="mt-6 rounded-xl bg-[#121212] p-5 text-white">
-              <p className="text-[11px] uppercase tracking-[0.15em] text-white/45">Estado de maquinaria</p>
-              <div className="mt-3"><MachineStatusTag status={selectedZone.status} dark /></div>
-              <p className="mt-3 text-xs leading-relaxed text-white/55">
-                {selectedZone.status === "paro-solicitado" ? "Se registró la solicitud de paro. Aún no hay confirmación del equipo." : selectedZone.status === "paro-confirmado" ? "El equipo reportó que el paro fue ejecutado." : "Sin solicitud de paro registrada en esta simulación."}
-              </p>
-            </div>
-
-            {selectedZone.detection ? (
-              <div className="mt-6">
-                <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-medium">Detección asociada</h3><span className="font-mono text-xs text-neutral-400">{selectedZone.detection.time}</span></div>
-                <div className="mt-4 flex items-center justify-between rounded-xl border border-black/10 px-4 py-3"><span className="flex items-center gap-2 text-sm"><Radar className="size-4" aria-hidden="true" /> {selectedZone.detection.classification}</span><span className="rounded-md bg-[#DCDCDC]/60 px-2 py-1 font-mono text-xs">{selectedZone.detection.confidence}%</span></div>
-                <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                  <div><dt className="text-xs text-neutral-400">Detectó</dt><dd className="mt-1 font-medium">{selectedZone.detection.robotId}</dd></div>
-                  <div><dt className="text-xs text-neutral-400">Distancia al carrito</dt><dd className="mt-1 font-mono font-medium">{selectedZone.detection.distance}</dd></div>
-                  <div className="col-span-2"><dt className="text-xs text-neutral-400">Orientación relativa</dt><dd className="mt-1 font-medium">{selectedZone.detection.direction}</dd></div>
-                </dl>
-              </div>
-            ) : (
-              <div className="mt-6 rounded-xl border border-dashed border-black/15 p-5"><p className="text-sm font-medium">Sin detecciones humanas</p><p className="mt-1 text-xs leading-relaxed text-neutral-500">Los carritos de esta zona no han reportado una posible persona en el escenario mostrado.</p></div>
-            )}
+            {selected ? <>
+              <div className="mt-6 rounded-xl bg-[#121212] p-5 text-white"><p className="text-xs text-white/45">Distancia al sensor</p><p className="mt-4 font-mono text-4xl tracking-[-0.06em]">{selected.distanceM.toFixed(2)}<span className="ml-2 text-base text-white/40">m</span></p><p className="mt-4 text-[11px] text-white/45">T{selected.slot} · {current ? simulated ? "Muestra simulada" : "Lectura vigente" : "Última lectura, pendiente de actualizar"}</p></div>
+              <dl className="mt-6 grid grid-cols-2 gap-x-5 gap-y-6 text-sm">
+                <div><dt className="text-xs text-neutral-400">Posición X</dt><dd className="mt-2 font-mono">{signed(selected.xMm / 1000)} m</dd></div>
+                <div><dt className="text-xs text-neutral-400">Posición Y</dt><dd className="mt-2 font-mono">{signed(selected.yMm / 1000)} m</dd></div>
+                <div><dt className="text-xs text-neutral-400">Velocidad reportada</dt><dd className="mt-2 font-mono">{signed(selected.speedCms / 100)} m/s</dd></div>
+                <div><dt className="text-xs text-neutral-400">Ángulo calculado</dt><dd className="mt-2 font-mono">{signed(selected.angleDeg, 1)}°</dd></div>
+              </dl>
+            </> : <div className="my-auto py-12 text-center"><Target className="mx-auto size-8 text-neutral-300" aria-hidden="true" /><p className="mt-4 text-sm font-medium">{current ? "Sin objetivos detectados" : "Esperando lecturas"}</p><p className="mx-auto mt-2 max-w-60 text-xs leading-relaxed text-neutral-400">{current ? "La última trama válida reportó cero objetivos." : "Las coordenadas aparecerán cuando llegue una muestra válida del radar."}</p></div>}
+            <p className="mt-7 border-t border-black/5 pt-4 text-[11px] leading-relaxed text-neutral-400">T1, T2 y T3 identifican ranuras del radar. No representan identidades permanentes de personas.</p>
           </aside>
-        </section>
-
-        <section className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-base font-medium">Estado de la flota</h2><p className="mt-1 text-xs text-neutral-400">Selecciona un carrito para consultar su zona</p></div><span className="flex items-center gap-1.5 text-xs text-neutral-500"><Wifi className="size-3.5" aria-hidden="true" /> 4 de 4 conectados en la simulación</span></div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {robots.map((robot) => (
-              <button key={robot.id} type="button" onClick={() => setSelectedZoneId(robot.zone)} className="rounded-xl border border-black/10 bg-white p-4 text-left transition-colors hover:bg-[#DCDCDC]/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-                <div className="flex items-center justify-between"><span className="flex items-center gap-2 text-sm font-medium"><Bot className="size-4" aria-hidden="true" />{robot.id}</span><span className="size-2 rounded-full bg-black" aria-label="Conectado" /></div>
-                <p className="mt-2 text-xs text-neutral-500">Zona {robot.zone} · último reporte {robot.lastReport}</p>
-                <div className="mt-5 flex items-center gap-3"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#DCDCDC]"><div className="h-full bg-black" style={{ width: `${robot.battery}%` }} /></div><span className="flex items-center gap-1 font-mono text-xs text-neutral-500"><BatteryCharging className="size-3.5" aria-hidden="true" />{robot.battery}%</span></div>
-              </button>
-            ))}
-          </div>
-        </section>
+        </div>
 
         <section className="overflow-hidden rounded-2xl border border-black/10 bg-white">
-          <div className="flex flex-col gap-2 border-b border-black/10 px-5 py-5 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-base font-medium">Bitácora de eventos</h2><p className="mt-1 text-xs text-neutral-400">Secuencia simulada de detección y respuesta</p></div><span className="self-start rounded-md bg-[#DCDCDC]/55 px-2.5 py-1 text-[10px] font-medium tracking-wider">DATOS DE EJEMPLO</span></div>
-          <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-left text-sm"><thead className="border-b border-black/10 text-[11px] font-medium uppercase tracking-wider text-neutral-400"><tr><th className="px-5 py-3 font-medium">Hora</th><th className="px-5 py-3 font-medium">Zona</th><th className="px-5 py-3 font-medium">Origen</th><th className="px-5 py-3 font-medium">Evento</th><th className="px-5 py-3 font-medium">Detalle</th></tr></thead><tbody className="divide-y divide-black/5">{events.map((event) => <tr className={event.important ? "bg-[#DCDCDC]/25" : "hover:bg-neutral-50"} key={`${event.time}-${event.event}`}><td className="px-5 py-4 font-mono text-xs text-neutral-500"><span className="inline-flex items-center gap-1"><Clock3 className="size-3" aria-hidden="true" />{event.time}</span></td><td className="px-5 py-4 font-medium">{event.zone}</td><td className="px-5 py-4 text-neutral-600">{event.origin}</td><td className="px-5 py-4"><span className={`font-medium ${event.important ? "underline decoration-black/30 underline-offset-4" : ""}`}>{event.event}</span></td><td className="px-5 py-4 text-neutral-500">{event.detail}</td></tr>)}</tbody></table></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 px-5 py-5 sm:px-6"><div><h2 className="text-base font-medium">Lecturas por objetivo</h2><p className="mt-1 text-xs text-neutral-400">Coordenadas respecto al sensor · distancia y ángulo calculados</p></div><span className="rounded-md bg-neutral-100 px-2.5 py-1 font-mono text-[10px] text-neutral-500">{current ? "MUESTRA VIGENTE" : "ÚLTIMA MUESTRA"}</span></div>
+          <div className="overflow-x-auto"><table className="w-full min-w-[670px] text-left text-sm"><thead className="border-b border-black/5 text-[10px] uppercase tracking-wider text-neutral-400"><tr>{["Objetivo", "X (m)", "Y (m)", "Distancia (m)", "Ángulo (°)", "Velocidad (m/s)"].map((label) => <th key={label} scope="col" className="px-5 py-3 font-medium">{label}</th>)}</tr></thead><tbody className="divide-y divide-black/5">{[1, 2, 3].map((slot) => {
+            const target = targets.find((item) => item.slot === slot)
+            return <tr key={slot} className={selected?.slot === slot ? "bg-neutral-50" : ""}><th scope="row" className="px-5 py-4 text-xs font-medium"><span className="inline-flex items-center gap-2"><span className="size-2 rounded-full" style={{ backgroundColor: target ? targetColors[slot - 1] : "#d4d4d4" }} />T{slot}</span>{!target && <span className="ml-2 font-normal text-neutral-400">{reading?.valid ? "Sin objetivo" : "Sin lectura"}</span>}</th>{[target ? signed(target.xMm / 1000) : "—", target ? signed(target.yMm / 1000) : "—", target?.distanceM.toFixed(2) ?? "—", target ? signed(target.angleDeg, 1) : "—", target ? signed(target.speedCms / 100) : "—"].map((value, index) => <td key={index} className="px-5 py-4 font-mono text-xs text-neutral-600">{value}</td>)}</tr>
+          })}</tbody></table></div>
         </section>
 
+        <div className="grid items-start gap-5 lg:grid-cols-2">
+          <section className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6"><div className="flex items-center justify-between"><h2 className="text-base font-medium">Registro de eventos</h2><Clock3 className="size-4 text-neutral-400" aria-hidden="true" /></div><p className="mt-1 text-xs text-neutral-400">Eventos del dispositivo y actividad de esta sesión web</p><ol className="mt-5 divide-y divide-black/5">{timeline.length === 0 ? <li className="py-5 text-sm text-neutral-400">Todavía no hay eventos registrados.</li> : timeline.map((event) => <li key={event.id} className="flex gap-4 py-4"><time className="shrink-0 pt-0.5 font-mono text-[10px] text-neutral-400" dateTime={new Date(event.timestamp).toISOString()}>{formatTime(event.timestamp)}</time><div><p className="text-xs font-medium">{event.event}<span className="ml-2 text-[10px] font-normal text-neutral-400">{event.source === "web" ? "Web · esta sesión" : event.source === "simulated" ? "Simulado" : "Dispositivo"}</span></p><p className="mt-1 text-[11px] leading-relaxed text-neutral-400">{event.detail}</p></div></li>)}</ol></section>
+          <section className="space-y-5"><div className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6"><h2 className="text-base font-medium">Recorrido de los datos</h2><div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-4 text-xs">{[{ icon: Radio, label: "Radar" }, { icon: Wifi, label: "ESP32" }, { icon: Database, label: "Firebase" }, { icon: ArrowDownToLine, label: "Web" }].map(({ icon: Icon, label }, index) => <div key={label} className="flex items-center gap-3"><span className="inline-flex items-center gap-2"><Icon className="size-4 text-neutral-400" aria-hidden="true" />{label}</span>{index < 3 && <ArrowRight className="size-3 text-neutral-300" aria-hidden="true" />}</div>)}</div><p className="mt-5 text-[11px] leading-relaxed text-neutral-400">La etiqueta de origen distingue las pruebas de los reportes del sensor. Sin una lectura vigente, los indicadores actuales quedan pendientes.</p></div>
+            <details className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6"><summary className="cursor-pointer text-sm font-medium">Detalle técnico</summary><dl className="mt-5 grid grid-cols-2 gap-5 text-xs"><div><dt className="text-neutral-400">Dispositivo</dt><dd className="mt-2 font-mono">{deviceId}</dd></div><div><dt className="text-neutral-400">Sensor</dt><dd className="mt-2">HLK-LD2450</dd></div><div><dt className="text-neutral-400">Último reporte ESP32</dt><dd className="mt-2">{formatTime(status.lastSeenAt)}</dd></div><div><dt className="text-neutral-400">Señal WiFi</dt><dd className="mt-2">{status.wifiRssiDbm === null ? "Sin dato" : `${status.wifiRssiDbm} dBm`}</dd></div><div><dt className="text-neutral-400">Firmware ESP32</dt><dd className="mt-2 break-all">{status.firmware ?? "Sin dato"}</dd></div><div><dt className="text-neutral-400">Resolución reportada T{selected?.slot ?? "—"}</dt><dd className="mt-2">{selected ? `${selected.resolutionMm} mm` : "Sin dato"}</dd></div></dl><p className="mt-5 text-[11px] leading-relaxed text-neutral-400">La resolución es un campo del protocolo; no equivale a precisión de posición ni a confianza de clasificación. La velocidad conserva el signo reportado por el radar.</p><div className="mt-4 flex gap-2 border-t border-black/5 pt-4 text-[11px] text-neutral-400"><Signal className="size-3.5 shrink-0" aria-hidden="true" /><span>UART predeterminado: 256000 baudios · 10 tramas/s nominales. La tasa de publicación de la ESP32 puede ser menor.</span></div></details>
+          </section>
+        </div>
       </div>
     </div>
   )

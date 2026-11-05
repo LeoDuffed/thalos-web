@@ -1,0 +1,33 @@
+{
+  "telemetry": {
+    "devices": {
+      "robot-01": {
+        "sensors": {
+          "ld2450": {
+            "model": "HLK-LD2450",
+            "source": "simulated",
+            "updatedAt": 1793840747796,
+            "sequence": 1,
+            "targetCount": 2,
+            "targets": {
+              "1": {
+                "active": true,
+                "xMm": -782,
+                "yMm": 1713,
+                "speedCms": -16,
+                "resolutionMm": 320
+              },
+              "2": {
+                "active": true,
+                "xMm": 1200,
+                "yMm": 3200,
+                "speedCms": 25,
+                "resolutionMm": 320
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

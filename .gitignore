@@ -22,3 +22,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Configuración y credenciales locales
+.env
+.env.*
+!.env.example
+
+AGENTS.md
+
+# Compilaciones locales del firmware
+firmware/.build/
+
+# Caché local de PlatformIO
+firmware/**/.pio/
+
+# Caché de scripts del firmware
+firmware/**/__pycache__/

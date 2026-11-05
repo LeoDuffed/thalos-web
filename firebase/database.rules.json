@@ -1,0 +1,81 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "telemetry": {
+      ".read": "auth != null",
+      "devices": {
+        "robot-01": {
+          "status": {
+            ".write": "auth != null && auth.uid === 'zAvi8jSz0eSn5T0vL4ECA1nQGns1' && newData.exists()",
+            ".validate": "newData.hasChildren(['lastSeenAt', 'firmware', 'wifiRssiDbm'])",
+            "lastSeenAt": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 8640000000000000 && newData.val() <= now + 2000 && newData.val() >= now - 15000"
+            },
+            "firmware": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 64"
+            },
+            "wifiRssiDbm": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= -127 && newData.val() <= 0"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "sensors": {
+            "ld2450": {
+              ".write": "auth != null && auth.uid === 'zAvi8jSz0eSn5T0vL4ECA1nQGns1' && newData.exists()",
+              ".validate": "newData.hasChildren(['model', 'source', 'updatedAt', 'sequence', 'targetCount']) && newData.child('targetCount').val() === ((newData.child('targets/1/active').val() === true ? 1 : 0) + (newData.child('targets/2/active').val() === true ? 1 : 0) + (newData.child('targets/3/active').val() === true ? 1 : 0))",
+              "model": {
+                ".validate": "newData.val() === 'HLK-LD2450'"
+              },
+              "source": {
+                ".validate": "newData.val() === 'sensor'"
+              },
+              "updatedAt": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 8640000000000000 && newData.val() <= now + 2000 && newData.val() >= now - 15000"
+              },
+              "sequence": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 4294967295"
+              },
+              "targetCount": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 3"
+              },
+              "targets": {
+                "$slot": {
+                  ".validate": "($slot === '1' || $slot === '2' || $slot === '3') && newData.hasChildren(['active', 'xMm', 'yMm', 'speedCms', 'resolutionMm']) && (newData.child('xMm').val() !== 0 || newData.child('yMm').val() !== 0 || newData.child('speedCms').val() !== 0 || newData.child('resolutionMm').val() !== 0)",
+                  "active": {
+                    ".validate": "newData.val() === true"
+                  },
+                  "xMm": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= -32767 && newData.val() <= 32767"
+                  },
+                  "yMm": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= -32767 && newData.val() <= 32767"
+                  },
+                  "speedCms": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= -32767 && newData.val() <= 32767"
+                  },
+                  "resolutionMm": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 65535"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                }
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        }
+      },
+      "events": {
+        ".indexOn": [
+          "timestamp"
+        ]
+      }
+    }
+  }
+}
