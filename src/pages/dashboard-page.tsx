@@ -91,7 +91,6 @@ export function DashboardPage() {
                 <div><dt className="text-xs text-neutral-400">Ángulo calculado</dt><dd className="mt-2 font-mono">{signed(selected.angleDeg, 1)}°</dd></div>
               </dl>
             </> : <div className="my-auto py-12 text-center"><Target className="mx-auto size-8 text-neutral-300" aria-hidden="true" /><p className="mt-4 text-sm font-medium">{current ? "Sin objetivos detectados" : "Esperando lecturas"}</p><p className="mx-auto mt-2 max-w-60 text-xs leading-relaxed text-neutral-400">{current ? "La última trama válida reportó cero objetivos." : "Las coordenadas aparecerán cuando llegue una muestra válida del radar."}</p></div>}
-            <p className="mt-7 border-t border-black/5 pt-4 text-[11px] leading-relaxed text-neutral-400">T1, T2 y T3 identifican ranuras del radar. No representan identidades permanentes de personas.</p>
           </aside>
         </div>
 

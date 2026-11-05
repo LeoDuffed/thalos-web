@@ -19,7 +19,7 @@ export function RadarView({ targets, selectedSlot, current, onSelect }: { target
   return (
     <section className="overflow-hidden rounded-2xl border border-black/10 bg-[#121212] text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-5 sm:px-6">
-        <div><h2 className="text-base font-medium">Campo de detección</h2><p className="mt-1 text-xs text-white/45">Vista superior · vista espejo del sensor</p></div>
+        <div><h2 className="text-base font-medium">Campo de detección</h2><p className="mt-1 text-xs text-white/45">Vista superior  </p></div>
         <span className="rounded-md border border-white/15 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white/60">{current ? "LECTURA VIGENTE" : targets.length ? "ÚLTIMA LECTURA" : "ESPERANDO DATOS"}</span>
       </div>
       <div className="relative px-2 pt-3 sm:px-5">
@@ -59,7 +59,6 @@ export function RadarView({ targets, selectedSlot, current, onSelect }: { target
         </svg>
         {targets.length === 0 && <div className="pointer-events-none absolute inset-x-6 top-[40%] text-center"><Radar className="mx-auto size-7 text-white/35" aria-hidden="true" /><p className="mt-3 text-sm text-white/55">{current ? "Sin objetivos en esta lectura" : "Esperando la primera lectura del sensor"}</p></div>}
       </div>
-      <div className="flex flex-wrap justify-between gap-3 border-t border-white/10 px-5 py-4 text-[11px] leading-relaxed text-white/45 sm:px-6"><span>Escala de referencia: 6 m · ±60°</span><span>{outside ? `${outside} objetivo(s) fuera del campo representado; consulta la tabla.` : "Las etiquetas T1–T3 son ranuras de seguimiento."}</span></div>
     </section>
   )
 }
