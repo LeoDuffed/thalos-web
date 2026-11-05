@@ -38,3 +38,6 @@ firmware/**/.pio/
 
 # Caché de scripts del firmware
 firmware/**/__pycache__/
+
+# Documentación personal, conservada solo en esta computadora
+/docs/

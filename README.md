@@ -9,8 +9,6 @@ flowchart LR
   Firebase -->|"Actualizaciones en tiempo real"| Web["Centro de control · React"]
 ```
 
-**Empieza por [Cómo funciona y para qué sirve cada archivo](docs/como-funciona.md).**
-
 ## Dónde está cada cosa
 
 | Carpeta | Contenido |
@@ -19,7 +17,6 @@ flowchart LR
 | `firmware/` | El programa de la ESP32, sus conexiones y pruebas del sensor. |
 | `firebase/` | Reglas de acceso, pruebas de permisos y ejemplos separados en `examples/`. |
 | `tests/` | Pruebas de cómo la web interpreta las lecturas. |
-| `docs/` | Explicación del sistema y detalles técnicos de la telemetría. |
 | `public/`, `src/assets/` | Logo, favicon e imágenes de la página. |
 
 ## Abrir la página
@@ -51,8 +48,6 @@ Las pruebas de permisos de Firebase necesitan su emulador y se ejecutan por sepa
 
 ## Guías
 
-- [Cómo funciona y mapa de archivos](docs/como-funciona.md).
-- [Configuración de Firebase, formato de datos y comportamiento del tablero](docs/telemetria.md).
 - [Cableado, carga y solución de problemas de la ESP32](firmware/README.md).
 
 `node_modules/`, `dist/`, `.pio/` y `firmware/.build/` contienen dependencias o archivos locales de desarrollo; no son código que debas editar ni se suben a Git. `firmware/.build/` también conserva las capturas de las pruebas físicas.
