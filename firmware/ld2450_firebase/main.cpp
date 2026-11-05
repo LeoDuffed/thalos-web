@@ -54,7 +54,7 @@ void configureHttps(WiFiClientSecure& client, HTTPClient& http) {
   client.setHandshakeTimeout(6);
   http.setConnectTimeout(5000);
   http.setTimeout(5000);
-  // Requests are bounded; retries always build a new snapshot.
+  // Las peticiones tienen un tiempo límite; cada reintento toma una muestra nueva.
   http.setReuse(false);
 }
 
@@ -99,7 +99,7 @@ class FirebaseSession {
     if (!http.begin(client, url)) return false;
     http.addHeader("Content-Type", refreshing ? "application/x-www-form-urlencoded" : "application/json");
     const int code = http.POST(body);
-    // Never print a request URL, response body, email, password or token.
+    // Nunca imprimir la URL de la petición, el cuerpo de respuesta, el correo, la contraseña ni los tokens.
     body = "";
     if (code != HTTP_CODE_OK) {
       Serial.printf("Firebase: acceso no completado (HTTP %d). Revisar cuenta, red y hora.\n", code);
@@ -190,7 +190,7 @@ void uploadTask(void*) {
     if (uint32_t(now - lastAttempt) < retryDelay) continue;
     lastAttempt = now;
     if (session.needsAuthentication()) {
-      // Release the database TLS socket before opening the authentication one.
+      // Cierra la conexión TLS de la base de datos antes de abrir la de autenticación.
       client.stop();
     }
     if (!session.ready()) {
@@ -198,7 +198,7 @@ void uploadTask(void*) {
       continue;
     }
 
-    // Read after potentially slow authentication. Never queue measurements offline.
+    // Toma la muestra después de autenticar, pues puede tardar. No acumula mediciones sin conexión.
     const thalos::RadarSnapshot snapshot = readSnapshot();
     now = millis();
     const bool fresh = thalos::hasNewFreshReading(snapshot, now, hasPublished, lastPublishedSequence);
@@ -235,7 +235,7 @@ void uploadTask(void*) {
         }
       }
     } else {
-      // Permission errors also use 401. Do not keep logging in on a rules error.
+      // Los errores de permisos también usan 401. No repetir el inicio de sesión si fallan las reglas.
       const String response = code > 0 ? http.getString() : String();
       if (code == 401 && (response.indexOf("expired") >= 0 || response.indexOf("Invalid auth") >= 0)) {
         session.expireToken();
@@ -256,7 +256,7 @@ void setup() {
     Serial.println("COMPILACION DE COMPROBACION: WiFi desactivado. Completa firmware/.env.local y recompila.");
     return;
   }
-  // Blocking HTTPS runs on core 0. Arduino loop keeps draining UART on core 1.
+  // Las peticiones HTTPS se ejecutan en el núcleo 0. El bucle de Arduino sigue leyendo UART en el núcleo 1.
   if (xTaskCreatePinnedToCore(uploadTask, "firebase-upload", 16384, nullptr, 1, nullptr, 0) != pdPASS) {
     Serial.println("No fue posible iniciar WiFi: memoria insuficiente.");
   }

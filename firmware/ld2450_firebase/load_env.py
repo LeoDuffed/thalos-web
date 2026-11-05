@@ -1,4 +1,4 @@
-"""Read local secrets without putting them in compiler flags or log output."""
+"""Lee las credenciales locales sin incluirlas en los argumentos del compilador ni en los registros."""
 Import("env")
 from pathlib import Path
 import json
@@ -61,7 +61,7 @@ else:
 generated = Path(env.subst("$BUILD_DIR")) / "private"
 generated.mkdir(parents=True, exist_ok=True)
 header = generated / "thalos_config.h"
-content = "#pragma once\n// Generated locally. Contains secrets; never commit.\n"
+content = "#pragma once\n// Generado localmente. Contiene credenciales; nunca incluir en Git.\n"
 content += "static const bool kThalosConfigReady = %s;\n" % ("false" if check_only else "true")
 content += "".join("static const char %s[] = %s;\n" % (symbol, json.dumps(values[name], ensure_ascii=True)) for name, symbol in fields.items())
 if not header.exists() or header.read_text() != content:

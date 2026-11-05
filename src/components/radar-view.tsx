@@ -38,7 +38,7 @@ export function RadarView({ targets, selectedSlot, current, onSelect }: { target
           <line x1="100" y1="505" x2="700" y2="505" stroke="white" strokeOpacity="0.12" />
           <text x="730" y="529" fill="#777" fontSize="11">X</text>
           {visible.map((target) => {
-            // Mirror the horizontal view; keep the sensor measurements unchanged.
+            // Refleja la vista horizontal; conserva las mediciones originales del sensor.
             const x = origin.x - target.xMm / 1000 * scale
             const y = origin.y - target.yMm / 1000 * scale
             const color = targetColors[target.slot - 1]

@@ -13,7 +13,7 @@ struct RadarSnapshot {
   bool hasReading = false;
 };
 
-// Never resend an old measurement with a new timestamp, including after a retry.
+// Nunca reenviar una medición antigua con una fecha nueva, incluso al reintentar.
 inline bool hasNewFreshReading(const RadarSnapshot& snapshot, uint32_t now,
                                bool hasPublished, uint32_t lastSequence) {
   return snapshot.hasReading && snapshot.capturedAtUnixMs > 0 &&
@@ -21,8 +21,8 @@ inline bool hasNewFreshReading(const RadarSnapshot& snapshot, uint32_t now,
          (!hasPublished || snapshot.sequence != lastSequence);
 }
 
-// The entire radar node is replaced inside an atomic device PATCH. Omitted
-// targets therefore disappear when the count drops; unrelated nodes survive.
+// El nodo completo del radar se reemplaza en una operación PATCH atómica. Los
+// objetivos omitidos desaparecen al bajar el conteo; los demás nodos se conservan.
 inline bool buildDevicePatch(JsonDocument& patch, const RadarSnapshot& snapshot,
                              uint32_t now, bool hasPublished,
                              uint32_t lastSequence, int rssi) {
@@ -36,8 +36,8 @@ inline bool buildDevicePatch(JsonDocument& patch, const RadarSnapshot& snapshot,
   JsonObject radar = patch["sensors/ld2450"].to<JsonObject>();
   radar["model"] = "HLK-LD2450";
   radar["source"] = "sensor";
-  // Capture time from the SNTP-synchronized ESP clock, rather than upload time:
-  // slow HTTPS must not make an older UART reading appear newly measured.
+  // Usa la hora de captura del reloj de la ESP32 sincronizado por SNTP:
+  // una petición HTTPS lenta no debe hacer parecer nueva una lectura antigua.
   radar["updatedAt"] = snapshot.capturedAtUnixMs;
   radar["sequence"] = snapshot.sequence;
   radar["targetCount"] = snapshot.frame.targetCount;
@@ -55,4 +55,4 @@ inline bool buildDevicePatch(JsonDocument& patch, const RadarSnapshot& snapshot,
   return true;
 }
 
-}  // namespace thalos
+}  // Espacio de nombres thalos

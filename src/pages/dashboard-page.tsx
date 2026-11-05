@@ -42,7 +42,7 @@ export function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#f6f6f6] pb-10">
       <section className="border-b border-black/10 bg-white">
-        <div className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8 lg:py-10">
+        <div className="mx-auto max-w-360 px-5 py-8 lg:px-8 lg:py-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.17em] text-neutral-500"><Radio className="size-3.5" aria-hidden="true" /> Robot 01 · HLK-LD2450</p>
             <span className={`rounded-md border px-2.5 py-1 font-mono text-[10px] tracking-wider ${simulated ? "border-amber-200 bg-amber-50 text-amber-800" : "border-black/10 bg-neutral-50 text-neutral-500"}`}>{sourceLabel}</span>
@@ -57,7 +57,7 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1440px] space-y-5 px-5 pt-6 lg:px-8">
+      <div className="mx-auto max-w-360 space-y-5 px-5 pt-6 lg:px-8">
         {error ? <div role="alert" className="flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 sm:flex-row sm:items-center"><p>{error}</p><button type="button" onClick={retry} className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs font-medium text-white"><RefreshCw className="size-3.5" />Reintentar</button></div>
           : !loaded ? <p role="status" className="rounded-xl border border-black/10 bg-white p-4 text-sm text-neutral-500">Conectando y leyendo la telemetría…</p>
           : !connected ? <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">Sin conexión con Firebase. Los datos que permanezcan visibles corresponden a la última lectura recibida.</p>
@@ -97,7 +97,7 @@ export function DashboardPage() {
 
         <section className="overflow-hidden rounded-2xl border border-black/10 bg-white">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 px-5 py-5 sm:px-6"><div><h2 className="text-base font-medium">Lecturas por objetivo</h2><p className="mt-1 text-xs text-neutral-400">Coordenadas respecto al sensor · distancia y ángulo calculados</p></div><span className="rounded-md bg-neutral-100 px-2.5 py-1 font-mono text-[10px] text-neutral-500">{current ? "MUESTRA VIGENTE" : "ÚLTIMA MUESTRA"}</span></div>
-          <div className="overflow-x-auto"><table className="w-full min-w-[670px] text-left text-sm"><thead className="border-b border-black/5 text-[10px] uppercase tracking-wider text-neutral-400"><tr>{["Objetivo", "X (m)", "Y (m)", "Distancia (m)", "Ángulo (°)", "Velocidad (m/s)"].map((label) => <th key={label} scope="col" className="px-5 py-3 font-medium">{label}</th>)}</tr></thead><tbody className="divide-y divide-black/5">{[1, 2, 3].map((slot) => {
+          <div className="overflow-x-auto"><table className="w-full min-w-167.5 text-left text-sm"><thead className="border-b border-black/5 text-[10px] uppercase tracking-wider text-neutral-400"><tr>{["Objetivo", "X (m)", "Y (m)", "Distancia (m)", "Ángulo (°)", "Velocidad (m/s)"].map((label) => <th key={label} scope="col" className="px-5 py-3 font-medium">{label}</th>)}</tr></thead><tbody className="divide-y divide-black/5">{[1, 2, 3].map((slot) => {
             const target = targets.find((item) => item.slot === slot)
             return <tr key={slot} className={selected?.slot === slot ? "bg-neutral-50" : ""}><th scope="row" className="px-5 py-4 text-xs font-medium"><span className="inline-flex items-center gap-2"><span className="size-2 rounded-full" style={{ backgroundColor: target ? targetColors[slot - 1] : "#d4d4d4" }} />T{slot}</span>{!target && <span className="ml-2 font-normal text-neutral-400">{reading?.valid ? "Sin objetivo" : "Sin lectura"}</span>}</th>{[target ? signed(target.xMm / 1000) : "—", target ? signed(target.yMm / 1000) : "—", target?.distanceM.toFixed(2) ?? "—", target ? signed(target.angleDeg, 1) : "—", target ? signed(target.speedCms / 100) : "—"].map((value, index) => <td key={index} className="px-5 py-4 font-mono text-xs text-neutral-600">{value}</td>)}</tr>
           })}</tbody></table></div>

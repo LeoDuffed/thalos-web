@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "Ld2450Parser.h"
 
-// ESP32-WROOM-32 board shown by the user: RX2 = GPIO16, TX2 = GPIO17.
-constexpr int kRadarRxPin = 16;  // Connect to LD2450 TX.
-constexpr int kRadarTxPin = 17;  // Connect to LD2450 RX.
+// Placa ESP32-WROOM-32 del usuario: RX2 = GPIO16, TX2 = GPIO17.
+constexpr int kRadarRxPin = 16;  // Conectar al TX del LD2450.
+constexpr int kRadarTxPin = 17;  // Conectar al RX del LD2450.
 constexpr uint32_t kRadarBaud = 256000;
 constexpr uint32_t kMonitorBaud = 115200;
 constexpr uint32_t kPrintIntervalMs = 500;

@@ -1,16 +1,16 @@
 #pragma once
 
-// Public trust anchors from https://pki.goog/roots.pem (2026-11-04).
-// Never replace verification with setInsecure(). See firmware/README.md.
+// Certificados raíz públicos de https://pki.goog/roots.pem (2026-11-04).
+// Nunca sustituir la verificación por setInsecure(). Consulta firmware/README.md.
 static const char kGoogleRoots[] = R"PEM(
-# Operating CA: Google Trust Services LLC
-# Subject: C = US, O = Google Trust Services LLC, CN = GTS Root R1
-# Issuer: C = US, O = Google Trust Services LLC, CN = GTS Root R1
-# Label: "GTS Root R1"
-# Serial: 0203E5936F31B01349886BA217
-# MD5 Fingerprint: 05:FE:D0:BF:71:A8:A3:76:63:DA:01:E0:D8:52:DC:40
-# SHA1 Fingerprint: E5:8C:1C:C4:91:3B:38:63:4B:E9:10:6E:E3:AD:8E:6B:9D:D9:81:4A
-# SHA256 Fingerprint: D9:47:43:2A:BD:E7:B7:FA:90:FC:2E:6B:59:10:1B:12:80:E0:E1:C7:E4:E4:0F:A3:C6:88:7F:FF:57:A7:F4:CF
+# Autoridad certificadora: Google Trust Services LLC
+# Titular: C = US, O = Google Trust Services LLC, CN = GTS Root R1
+# Emisor: C = US, O = Google Trust Services LLC, CN = GTS Root R1
+# Etiqueta: "GTS Root R1"
+# Número de serie: 0203E5936F31B01349886BA217
+# Huella MD5: 05:FE:D0:BF:71:A8:A3:76:63:DA:01:E0:D8:52:DC:40
+# Huella SHA1: E5:8C:1C:C4:91:3B:38:63:4B:E9:10:6E:E3:AD:8E:6B:9D:D9:81:4A
+# Huella SHA256: D9:47:43:2A:BD:E7:B7:FA:90:FC:2E:6B:59:10:1B:12:80:E0:E1:C7:E4:E4:0F:A3:C6:88:7F:FF:57:A7:F4:CF
 -----BEGIN CERTIFICATE-----
 MIIFVzCCAz+gAwIBAgINAgPlk28xsBNJiGuiFzANBgkqhkiG9w0BAQwFADBHMQsw
 CQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEU
@@ -43,14 +43,14 @@ Z6tGn6D/Qqc6f1zLXbBwHSs09dR2CQzreExZBfMzQsNhFRAbd03OIozUhfJFfbdT
 bP6MvPJwNQzcmRk13NfIRmPVNnGuV/u3gm3c
 -----END CERTIFICATE-----
 
-# Operating CA: Google Trust Services LLC
-# Subject: C = US, O = Google Trust Services LLC, CN = GTS Root R2
-# Issuer: C = US, O = Google Trust Services LLC, CN = GTS Root R2
-# Label: "GTS Root R2"
-# Serial: 0203E5AEC58D04251AAB1125AA
-# MD5 Fingerprint=1E:39:C0:53:E6:1E:29:82:0B:CA:52:55:36:5D:57:DC
-# SHA1 Fingerprint=9A:44:49:76:32:DB:DE:FA:D0:BC:FB:5A:7B:17:BD:9E:56:09:24:94
-# SHA256 Fingerprint=8D:25:CD:97:22:9D:BF:70:35:6B:DA:4E:B3:CC:73:40:31:E2:4C:F0:0F:AF:CF:D3:2D:C7:6E:B5:84:1C:7E:A8
+# Autoridad certificadora: Google Trust Services LLC
+# Titular: C = US, O = Google Trust Services LLC, CN = GTS Root R2
+# Emisor: C = US, O = Google Trust Services LLC, CN = GTS Root R2
+# Etiqueta: "GTS Root R2"
+# Número de serie: 0203E5AEC58D04251AAB1125AA
+# Huella MD5=1E:39:C0:53:E6:1E:29:82:0B:CA:52:55:36:5D:57:DC
+# Huella SHA1=9A:44:49:76:32:DB:DE:FA:D0:BC:FB:5A:7B:17:BD:9E:56:09:24:94
+# Huella SHA256=8D:25:CD:97:22:9D:BF:70:35:6B:DA:4E:B3:CC:73:40:31:E2:4C:F0:0F:AF:CF:D3:2D:C7:6E:B5:84:1C:7E:A8
 -----BEGIN CERTIFICATE-----
 MIIFVzCCAz+gAwIBAgINAgPlrsWNBCUaqxElqjANBgkqhkiG9w0BAQwFADBHMQsw
 CQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEU
@@ -83,14 +83,14 @@ JPFI/2R80L5cFtHvma3AH/vLrrw4IgYmZNralw4/KBVEqE8AyvCazM90arQ+POuV
 6WLAYv7YTVWW4tAR+kg0Eeye7QUd5MjWHYbL
 -----END CERTIFICATE-----
 
-# Operating CA: Google Trust Services LLC
-# Subject: C = US, O = Google Trust Services LLC, CN = GTS Root R3
-# Issuer: C = US, O = Google Trust Services LLC, CN = GTS Root R3
-# Label: "GTS Root R3"
-# Serial: 0203E5B882EB20F825276D3D66
-# MD5 Fingerprint: 3E:E7:9D:58:02:94:46:51:94:E5:E0:22:4A:8B:E7:73
-# SHA1 Fingerprint: ED:E5:71:80:2B:C8:92:B9:5B:83:3C:D2:32:68:3F:09:CD:A0:1E:46
-# SHA256 Fingerprint: 34:D8:A7:3E:E2:08:D9:BC:DB:0D:95:65:20:93:4B:4E:40:E6:94:82:59:6E:8B:6F:73:C8:42:6B:01:0A:6F:48
+# Autoridad certificadora: Google Trust Services LLC
+# Titular: C = US, O = Google Trust Services LLC, CN = GTS Root R3
+# Emisor: C = US, O = Google Trust Services LLC, CN = GTS Root R3
+# Etiqueta: "GTS Root R3"
+# Número de serie: 0203E5B882EB20F825276D3D66
+# Huella MD5: 3E:E7:9D:58:02:94:46:51:94:E5:E0:22:4A:8B:E7:73
+# Huella SHA1: ED:E5:71:80:2B:C8:92:B9:5B:83:3C:D2:32:68:3F:09:CD:A0:1E:46
+# Huella SHA256: 34:D8:A7:3E:E2:08:D9:BC:DB:0D:95:65:20:93:4B:4E:40:E6:94:82:59:6E:8B:6F:73:C8:42:6B:01:0A:6F:48
 -----BEGIN CERTIFICATE-----
 MIICCTCCAY6gAwIBAgINAgPluILrIPglJ209ZjAKBggqhkjOPQQDAzBHMQswCQYD
 VQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEUMBIG
@@ -105,14 +105,14 @@ VKOQFhG/hMjqb2sXnh5GmCCbn9MN2azTL818+FsuVbu/3ZL3pAzcMeGiAjEA/Jdm
 ZuVDFhOD3cffL74UOO0BzrEXGhF16b0DjyZ+hOXJYKaV11RZt+cRLInUue4X
 -----END CERTIFICATE-----
 
-# Operating CA: Google Trust Services LLC
-# Subject: C = US, O = Google Trust Services LLC, CN = GTS Root R4
-# Issuer: C = US, O = Google Trust Services LLC, CN = GTS Root R4
-# Label: "GTS Root R4"
-# Serial: 0203E5C068EF631A9C72905052
-# MD5 Fingerprint=43:96:83:77:19:4D:76:B3:9D:65:52:E4:1D:22:A5:E8
-# SHA1 Fingerprint=77:D3:03:67:B5:E0:0C:15:F6:0C:38:61:DF:7C:E1:3B:92:46:4D:47
-# SHA256 Fingerprint=34:9D:FA:40:58:C5:E2:63:12:3B:39:8A:E7:95:57:3C:4E:13:13:C8:3F:E6:8F:93:55:6C:D5:E8:03:1B:3C:7D
+# Autoridad certificadora: Google Trust Services LLC
+# Titular: C = US, O = Google Trust Services LLC, CN = GTS Root R4
+# Emisor: C = US, O = Google Trust Services LLC, CN = GTS Root R4
+# Etiqueta: "GTS Root R4"
+# Número de serie: 0203E5C068EF631A9C72905052
+# Huella MD5=43:96:83:77:19:4D:76:B3:9D:65:52:E4:1D:22:A5:E8
+# Huella SHA1=77:D3:03:67:B5:E0:0C:15:F6:0C:38:61:DF:7C:E1:3B:92:46:4D:47
+# Huella SHA256=34:9D:FA:40:58:C5:E2:63:12:3B:39:8A:E7:95:57:3C:4E:13:13:C8:3F:E6:8F:93:55:6C:D5:E8:03:1B:3C:7D
 -----BEGIN CERTIFICATE-----
 MIICCTCCAY6gAwIBAgINAgPlwGjvYxqccpBQUjAKBggqhkjOPQQDAzBHMQswCQYD
 VQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEUMBIG
@@ -127,14 +127,14 @@ BBSATNbrdP9JNqPV2Py1PsVq8JQdjDAKBggqhkjOPQQDAwNpADBmAjEA6ED/g94D
 p/SgguMh1YQdc4acLa/KNJvxn7kjNuK8YAOdgLOaVsjh4rsUecrNIdSUtUlD
 -----END CERTIFICATE-----
 
-# Operating CA: Google Trust Services LLC
-# Subject: OU = GlobalSign ECC Root CA - R4, O = GlobalSign, CN = GlobalSign
-# Issuer: OU = GlobalSign ECC Root CA - R4, O = GlobalSign, CN = GlobalSign
-# Label: "GlobalSign R4"
-# Serial: 0203E57EF53F93FDA50921B2A6
-# MD5 Fingerprint: 26:29:F8:6D:E1:88:BF:A2:65:7F:AA:C4:CD:0F:7F:FC
-# SHA1 Fingerprint: 6B:A0:B0:98:E1:71:EF:5A:AD:FE:48:15:80:77:10:F4:BD:6F:0B:28
-# SHA256 Fingerprint: B0:85:D7:0B:96:4F:19:1A:73:E4:AF:0D:54:AE:7A:0E:07:AA:FD:AF:9B:71:DD:08:62:13:8A:B7:32:5A:24:A2
+# Autoridad certificadora: Google Trust Services LLC
+# Titular: OU = GlobalSign ECC Root CA - R4, O = GlobalSign, CN = GlobalSign
+# Emisor: OU = GlobalSign ECC Root CA - R4, O = GlobalSign, CN = GlobalSign
+# Etiqueta: "GlobalSign R4"
+# Número de serie: 0203E57EF53F93FDA50921B2A6
+# Huella MD5: 26:29:F8:6D:E1:88:BF:A2:65:7F:AA:C4:CD:0F:7F:FC
+# Huella SHA1: 6B:A0:B0:98:E1:71:EF:5A:AD:FE:48:15:80:77:10:F4:BD:6F:0B:28
+# Huella SHA256: B0:85:D7:0B:96:4F:19:1A:73:E4:AF:0D:54:AE:7A:0E:07:AA:FD:AF:9B:71:DD:08:62:13:8A:B7:32:5A:24:A2
 -----BEGIN CERTIFICATE-----
 MIIB3DCCAYOgAwIBAgINAgPlfvU/k/2lCSGypjAKBggqhkjOPQQDAjBQMSQwIgYD
 VQQLExtHbG9iYWxTaWduIEVDQyBSb290IENBIC0gUjQxEzARBgNVBAoTCkdsb2Jh
@@ -148,14 +148,14 @@ HQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUVLB7rUW44kB/
 bmF0774BxL4YSFlhgjICICadVGNA3jdgUM/I2O2dgq43mLyjj0xMqTQrbO/7lZsm
 -----END CERTIFICATE-----
 
-# Operating CA: DigiCert
-# Issuer: CN=DigiCert Assured ID Root G2 O=DigiCert Inc OU=www.digicert.com
-# Subject: CN=DigiCert Assured ID Root G2 O=DigiCert Inc OU=www.digicert.com
-# Label: "DigiCert Assured ID Root G2"
-# Serial: 15385348160840213938643033620894905419
-# MD5 Fingerprint: 92:38:b9:f8:63:24:82:65:2c:57:33:e6:fe:81:8f:9d
-# SHA1 Fingerprint: a1:4b:48:d9:43:ee:0a:0e:40:90:4f:3c:e0:a4:c0:91:93:51:5d:3f
-# SHA256 Fingerprint: 7d:05:eb:b6:82:33:9f:8c:94:51:ee:09:4e:eb:fe:fa:79:53:a1:14:ed:b2:f4:49:49:45:2f:ab:7d:2f:c1:85
+# Autoridad certificadora: DigiCert
+# Emisor: CN=DigiCert Assured ID Root G2 O=DigiCert Inc OU=www.digicert.com
+# Titular: CN=DigiCert Assured ID Root G2 O=DigiCert Inc OU=www.digicert.com
+# Etiqueta: "DigiCert Assured ID Root G2"
+# Número de serie: 15385348160840213938643033620894905419
+# Huella MD5: 92:38:b9:f8:63:24:82:65:2c:57:33:e6:fe:81:8f:9d
+# Huella SHA1: a1:4b:48:d9:43:ee:0a:0e:40:90:4f:3c:e0:a4:c0:91:93:51:5d:3f
+# Huella SHA256: 7d:05:eb:b6:82:33:9f:8c:94:51:ee:09:4e:eb:fe:fa:79:53:a1:14:ed:b2:f4:49:49:45:2f:ab:7d:2f:c1:85
 -----BEGIN CERTIFICATE-----
 MIIDljCCAn6gAwIBAgIQC5McOtY5Z+pnI7/Dr5r0SzANBgkqhkiG9w0BAQsFADBl
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
@@ -179,14 +179,14 @@ ON9vvKO+KSAnq3T/EyJ43pdSVR6DtVQgA+6uwE9W3jfMw3+qBCe703e4YtsXfJwo
 IhNzbM8m9Yop5w==
 -----END CERTIFICATE-----
 
-# Operating CA: DigiCert
-# Issuer: CN=DigiCert Assured ID Root G3 O=DigiCert Inc OU=www.digicert.com
-# Subject: CN=DigiCert Assured ID Root G3 O=DigiCert Inc OU=www.digicert.com
-# Label: "DigiCert Assured ID Root G3"
-# Serial: 15459312981008553731928384953135426796
-# MD5 Fingerprint: 7c:7f:65:31:0c:81:df:8d:ba:3e:99:e2:5c:ad:6e:fb
-# SHA1 Fingerprint: f5:17:a2:4f:9a:48:c6:c9:f8:a2:00:26:9f:dc:0f:48:2c:ab:30:89
-# SHA256 Fingerprint: 7e:37:cb:8b:4c:47:09:0c:ab:36:55:1b:a6:f4:5d:b8:40:68:0f:ba:16:6a:95:2d:b1:00:71:7f:43:05:3f:c2
+# Autoridad certificadora: DigiCert
+# Emisor: CN=DigiCert Assured ID Root G3 O=DigiCert Inc OU=www.digicert.com
+# Titular: CN=DigiCert Assured ID Root G3 O=DigiCert Inc OU=www.digicert.com
+# Etiqueta: "DigiCert Assured ID Root G3"
+# Número de serie: 15459312981008553731928384953135426796
+# Huella MD5: 7c:7f:65:31:0c:81:df:8d:ba:3e:99:e2:5c:ad:6e:fb
+# Huella SHA1: f5:17:a2:4f:9a:48:c6:c9:f8:a2:00:26:9f:dc:0f:48:2c:ab:30:89
+# Huella SHA256: 7e:37:cb:8b:4c:47:09:0c:ab:36:55:1b:a6:f4:5d:b8:40:68:0f:ba:16:6a:95:2d:b1:00:71:7f:43:05:3f:c2
 -----BEGIN CERTIFICATE-----
 MIICRjCCAc2gAwIBAgIQC6Fa+h3foLVJRK/NJKBs7DAKBggqhkjOPQQDAzBlMQsw
 CQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cu
@@ -204,14 +204,14 @@ JjZ91eQ0hjkCMHw2U/Aw5WJjOpnitqM7mzT6HtoQknFekROn3aRukswy1vUhZscv
 -----END CERTIFICATE-----
 
 
-# Operating CA: DigiCert
-# Issuer: CN=DigiCert Global Root G2 O=DigiCert Inc OU=www.digicert.com
-# Subject: CN=DigiCert Global Root G2 O=DigiCert Inc OU=www.digicert.com
-# Label: "DigiCert Global Root G2"
-# Serial: 4293743540046975378534879503202253541
-# MD5 Fingerprint: e4:a6:8a:c8:54:ac:52:42:46:0a:fd:72:48:1b:2a:44
-# SHA1 Fingerprint: df:3c:24:f9:bf:d6:66:76:1b:26:80:73:fe:06:d1:cc:8d:4f:82:a4
-# SHA256 Fingerprint: cb:3c:cb:b7:60:31:e5:e0:13:8f:8d:d3:9a:23:f9:de:47:ff:c3:5e:43:c1:14:4c:ea:27:d4:6a:5a:b1:cb:5f
+# Autoridad certificadora: DigiCert
+# Emisor: CN=DigiCert Global Root G2 O=DigiCert Inc OU=www.digicert.com
+# Titular: CN=DigiCert Global Root G2 O=DigiCert Inc OU=www.digicert.com
+# Etiqueta: "DigiCert Global Root G2"
+# Número de serie: 4293743540046975378534879503202253541
+# Huella MD5: e4:a6:8a:c8:54:ac:52:42:46:0a:fd:72:48:1b:2a:44
+# Huella SHA1: df:3c:24:f9:bf:d6:66:76:1b:26:80:73:fe:06:d1:cc:8d:4f:82:a4
+# Huella SHA256: cb:3c:cb:b7:60:31:e5:e0:13:8f:8d:d3:9a:23:f9:de:47:ff:c3:5e:43:c1:14:4c:ea:27:d4:6a:5a:b1:cb:5f
 -----BEGIN CERTIFICATE-----
 MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
@@ -235,14 +235,14 @@ pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl
 MrY=
 -----END CERTIFICATE-----
 
-# Operating CA: DigiCert
-# Issuer: CN=DigiCert Global Root G3 O=DigiCert Inc OU=www.digicert.com
-# Subject: CN=DigiCert Global Root G3 O=DigiCert Inc OU=www.digicert.com
-# Label: "DigiCert Global Root G3"
-# Serial: 7089244469030293291760083333884364146
-# MD5 Fingerprint: f5:5d:a4:50:a5:fb:28:7e:1e:0f:0d:cc:96:57:56:ca
-# SHA1 Fingerprint: 7e:04:de:89:6a:3e:66:6d:00:e6:87:d3:3f:fa:d9:3b:e8:3d:34:9e
-# SHA256 Fingerprint: 31:ad:66:48:f8:10:41:38:c7:38:f3:9e:a4:32:01:33:39:3e:3a:18:cc:02:29:6e:f9:7c:2a:c9:ef:67:31:d0
+# Autoridad certificadora: DigiCert
+# Emisor: CN=DigiCert Global Root G3 O=DigiCert Inc OU=www.digicert.com
+# Titular: CN=DigiCert Global Root G3 O=DigiCert Inc OU=www.digicert.com
+# Etiqueta: "DigiCert Global Root G3"
+# Número de serie: 7089244469030293291760083333884364146
+# Huella MD5: f5:5d:a4:50:a5:fb:28:7e:1e:0f:0d:cc:96:57:56:ca
+# Huella SHA1: 7e:04:de:89:6a:3e:66:6d:00:e6:87:d3:3f:fa:d9:3b:e8:3d:34:9e
+# Huella SHA256: 31:ad:66:48:f8:10:41:38:c7:38:f3:9e:a4:32:01:33:39:3e:3a:18:cc:02:29:6e:f9:7c:2a:c9:ef:67:31:d0
 -----BEGIN CERTIFICATE-----
 MIICPzCCAcWgAwIBAgIQBVVWvPJepDU1w6QP1atFcjAKBggqhkjOPQQDAzBhMQsw
 CQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cu
@@ -260,14 +260,14 @@ sycX
 -----END CERTIFICATE-----
 
 
-# Operating CA: DigiCert
-# Issuer: CN=DigiCert Trusted Root G4 O=DigiCert Inc OU=www.digicert.com
-# Subject: CN=DigiCert Trusted Root G4 O=DigiCert Inc OU=www.digicert.com
-# Label: "DigiCert Trusted Root G4"
-# Serial: 7451500558977370777930084869016614236
-# MD5 Fingerprint: 78:f2:fc:aa:60:1f:2f:b4:eb:c9:37:ba:53:2e:75:49
-# SHA1 Fingerprint: dd:fb:16:cd:49:31:c9:73:a2:03:7d:3f:c8:3a:4d:7d:77:5d:05:e4
-# SHA256 Fingerprint: 55:2f:7b:dc:f1:a7:af:9e:6c:e6:72:01:7f:4f:12:ab:f7:72:40:c7:8e:76:1a:c2:03:d1:d9:d2:0a:c8:99:88
+# Autoridad certificadora: DigiCert
+# Emisor: CN=DigiCert Trusted Root G4 O=DigiCert Inc OU=www.digicert.com
+# Titular: CN=DigiCert Trusted Root G4 O=DigiCert Inc OU=www.digicert.com
+# Etiqueta: "DigiCert Trusted Root G4"
+# Número de serie: 7451500558977370777930084869016614236
+# Huella MD5: 78:f2:fc:aa:60:1f:2f:b4:eb:c9:37:ba:53:2e:75:49
+# Huella SHA1: dd:fb:16:cd:49:31:c9:73:a2:03:7d:3f:c8:3a:4d:7d:77:5d:05:e4
+# Huella SHA256: 55:2f:7b:dc:f1:a7:af:9e:6c:e6:72:01:7f:4f:12:ab:f7:72:40:c7:8e:76:1a:c2:03:d1:d9:d2:0a:c8:99:88
 -----BEGIN CERTIFICATE-----
 MIIFkDCCA3igAwIBAgIQBZsbV56OITLiOQe9p3d1XDANBgkqhkiG9w0BAQwFADBi
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
@@ -301,14 +301,14 @@ r/OSmbaz5mEP0oUA51Aa5BuVnRmhuZyxm7EAHu/QD09CbMkKvO5D+jpxpchNJqU1
 gKDWHrO8Dw9TdSmq6hN35N6MgSGtBxBHEa2HPQfRdbzP82Z+
 -----END CERTIFICATE-----
 
-# Operating CA: GlobalSign
-# Issuer: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R3
-# Subject: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R3
-# Label: "GlobalSign Root CA - R3"
-# Serial: 4835703278459759426209954
-# MD5 Fingerprint: c5:df:b8:49:ca:05:13:55:ee:2d:ba:1a:c3:3e:b0:28
-# SHA1 Fingerprint: d6:9b:56:11:48:f0:1c:77:c5:45:78:c1:09:26:df:5b:85:69:76:ad
-# SHA256 Fingerprint: cb:b5:22:d7:b7:f1:27:ad:6a:01:13:86:5b:df:1c:d4:10:2e:7d:07:59:af:63:5a:7c:f4:72:0d:c9:63:c5:3b
+# Autoridad certificadora: GlobalSign
+# Emisor: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R3
+# Titular: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R3
+# Etiqueta: "GlobalSign Root CA - R3"
+# Número de serie: 4835703278459759426209954
+# Huella MD5: c5:df:b8:49:ca:05:13:55:ee:2d:ba:1a:c3:3e:b0:28
+# Huella SHA1: d6:9b:56:11:48:f0:1c:77:c5:45:78:c1:09:26:df:5b:85:69:76:ad
+# Huella SHA256: cb:b5:22:d7:b7:f1:27:ad:6a:01:13:86:5b:df:1c:d4:10:2e:7d:07:59:af:63:5a:7c:f4:72:0d:c9:63:c5:3b
 -----BEGIN CERTIFICATE-----
 MIIDXzCCAkegAwIBAgILBAAAAAABIVhTCKIwDQYJKoZIhvcNAQELBQAwTDEgMB4G
 A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNp
@@ -331,14 +331,14 @@ Mx86OyXShkDOOyyGeMlhLxS67ttVb9+E7gUJTb0o2HLO02JQZR7rkpeDMdmztcpH
 WD9f
 -----END CERTIFICATE-----
 
-# Operating CA: GlobalSign
-# Issuer: CN=GlobalSign O=GlobalSign OU=GlobalSign ECC Root CA - R5
-# Subject: CN=GlobalSign O=GlobalSign OU=GlobalSign ECC Root CA - R5
-# Label: "GlobalSign ECC Root CA - R5"
-# Serial: 32785792099990507226680698011560947931244
-# MD5 Fingerprint: 9f:ad:3b:1c:02:1e:8a:ba:17:74:38:81:0c:a2:bc:08
-# SHA1 Fingerprint: 1f:24:c6:30:cd:a4:18:ef:20:69:ff:ad:4f:dd:5f:46:3a:1b:69:aa
-# SHA256 Fingerprint: 17:9f:bc:14:8a:3d:d0:0f:d2:4e:a1:34:58:cc:43:bf:a7:f5:9c:81:82:d7:83:a5:13:f6:eb:ec:10:0c:89:24
+# Autoridad certificadora: GlobalSign
+# Emisor: CN=GlobalSign O=GlobalSign OU=GlobalSign ECC Root CA - R5
+# Titular: CN=GlobalSign O=GlobalSign OU=GlobalSign ECC Root CA - R5
+# Etiqueta: "GlobalSign ECC Root CA - R5"
+# Número de serie: 32785792099990507226680698011560947931244
+# Huella MD5: 9f:ad:3b:1c:02:1e:8a:ba:17:74:38:81:0c:a2:bc:08
+# Huella SHA1: 1f:24:c6:30:cd:a4:18:ef:20:69:ff:ad:4f:dd:5f:46:3a:1b:69:aa
+# Huella SHA256: 17:9f:bc:14:8a:3d:d0:0f:d2:4e:a1:34:58:cc:43:bf:a7:f5:9c:81:82:d7:83:a5:13:f6:eb:ec:10:0c:89:24
 -----BEGIN CERTIFICATE-----
 MIICHjCCAaSgAwIBAgIRYFlJ4CYuu1X5CneKcflK2GwwCgYIKoZIzj0EAwMwUDEk
 MCIGA1UECxMbR2xvYmFsU2lnbiBFQ0MgUm9vdCBDQSAtIFI1MRMwEQYDVQQKEwpH
@@ -354,14 +354,14 @@ KoZIzj0EAwMDaAAwZQIxAOVpEslu28YxuglB4Zf4+/2a4n0Sye18ZNPLBSWLVtmg
 xwy8p2Fp8fc74SrL+SvzZpA3
 -----END CERTIFICATE-----
 
-# Operating CA: GlobalSign
-# Issuer: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R6
-# Subject: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R6
-# Label: "GlobalSign Root CA - R6"
-# Serial: 1417766617973444989252670301619537
-# MD5 Fingerprint: 4f:dd:07:e4:d4:22:64:39:1e:0c:37:42:ea:d1:c6:ae
-# SHA1 Fingerprint: 80:94:64:0e:b5:a7:a1:ca:11:9c:1f:dd:d5:9f:81:02:63:a7:fb:d1
-# SHA256 Fingerprint: 2c:ab:ea:fe:37:d0:6c:a2:2a:ba:73:91:c0:03:3d:25:98:29:52:c4:53:64:73:49:76:3a:3a:b5:ad:6c:cf:69
+# Autoridad certificadora: GlobalSign
+# Emisor: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R6
+# Titular: CN=GlobalSign O=GlobalSign OU=GlobalSign Root CA - R6
+# Etiqueta: "GlobalSign Root CA - R6"
+# Número de serie: 1417766617973444989252670301619537
+# Huella MD5: 4f:dd:07:e4:d4:22:64:39:1e:0c:37:42:ea:d1:c6:ae
+# Huella SHA1: 80:94:64:0e:b5:a7:a1:ca:11:9c:1f:dd:d5:9f:81:02:63:a7:fb:d1
+# Huella SHA256: 2c:ab:ea:fe:37:d0:6c:a2:2a:ba:73:91:c0:03:3d:25:98:29:52:c4:53:64:73:49:76:3a:3a:b5:ad:6c:cf:69
 -----BEGIN CERTIFICATE-----
 MIIFgzCCA2ugAwIBAgIORea7A4Mzw4VlSOb/RVEwDQYJKoZIhvcNAQEMBQAwTDEg
 MB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2Jh
@@ -395,16 +395,16 @@ JJUEeKgDu+6B5dpffItKoZB0JaezPkvILFa9x8jvOOJckvB595yEunQtYQEgfn7R
 5hpxbqCo8YLoRT5s1gLXCmeDBVrJpBA=
 -----END CERTIFICATE-----
 
-# Note: "GlobalSign Root CA - R7" not added on purpose. It is P-521.
+# Nota: "GlobalSign Root CA - R7" se omitió deliberadamente porque utiliza P-521.
 
-# Operating CA: GoDaddy
-# Issuer: CN=Go Daddy Root Certificate Authority - G2 O=GoDaddy.com, Inc.
-# Subject: CN=Go Daddy Root Certificate Authority - G2 O=GoDaddy.com, Inc.
-# Label: "Go Daddy Root Certificate Authority - G2"
-# Serial: 0
-# MD5 Fingerprint: 80:3a:bc:22:c1:e6:fb:8d:9b:3b:27:4a:32:1b:9a:01
-# SHA1 Fingerprint: 47:be:ab:c9:22:ea:e8:0e:78:78:34:62:a7:9f:45:c2:54:fd:e6:8b
-# SHA256 Fingerprint: 45:14:0b:32:47:eb:9c:c8:c5:b4:f0:d7:b5:30:91:f7:32:92:08:9e:6e:5a:63:e2:74:9d:d3:ac:a9:19:8e:da
+# Autoridad certificadora: GoDaddy
+# Emisor: CN=Go Daddy Root Certificate Authority - G2 O=GoDaddy.com, Inc.
+# Titular: CN=Go Daddy Root Certificate Authority - G2 O=GoDaddy.com, Inc.
+# Etiqueta: "Go Daddy Root Certificate Authority - G2"
+# Número de serie: 0
+# Huella MD5: 80:3a:bc:22:c1:e6:fb:8d:9b:3b:27:4a:32:1b:9a:01
+# Huella SHA1: 47:be:ab:c9:22:ea:e8:0e:78:78:34:62:a7:9f:45:c2:54:fd:e6:8b
+# Huella SHA256: 45:14:0b:32:47:eb:9c:c8:c5:b4:f0:d7:b5:30:91:f7:32:92:08:9e:6e:5a:63:e2:74:9d:d3:ac:a9:19:8e:da
 -----BEGIN CERTIFICATE-----
 MIIDxTCCAq2gAwIBAgIBADANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMCVVMx
 EDAOBgNVBAgTB0FyaXpvbmExEzARBgNVBAcTClNjb3R0c2RhbGUxGjAYBgNVBAoT
@@ -429,14 +429,14 @@ LPAvTK33sefOT6jEm0pUBsV/fdUID+Ic/n4XuKxe9tQWskMJDE32p2u0mYRlynqI
 4uJEvlz36hz1
 -----END CERTIFICATE-----
 
-# Operating CA: GoDaddy
-# Issuer: CN=Starfield Root Certificate Authority - G2 O=Starfield Technologies, Inc.
-# Subject: CN=Starfield Root Certificate Authority - G2 O=Starfield Technologies, Inc.
-# Label: "Starfield Root Certificate Authority - G2"
-# Serial: 0
-# MD5 Fingerprint: d6:39:81:c6:52:7e:96:69:fc:fc:ca:66:ed:05:f2:96
-# SHA1 Fingerprint: b5:1c:06:7c:ee:2b:0c:3d:f8:55:ab:2d:92:f4:fe:39:d4:e7:0f:0e
-# SHA256 Fingerprint: 2c:e1:cb:0b:f9:d2:f9:e1:02:99:3f:be:21:51:52:c3:b2:dd:0c:ab:de:1c:68:e5:31:9b:83:91:54:db:b7:f5
+# Autoridad certificadora: GoDaddy
+# Emisor: CN=Starfield Root Certificate Authority - G2 O=Starfield Technologies, Inc.
+# Titular: CN=Starfield Root Certificate Authority - G2 O=Starfield Technologies, Inc.
+# Etiqueta: "Starfield Root Certificate Authority - G2"
+# Número de serie: 0
+# Huella MD5: d6:39:81:c6:52:7e:96:69:fc:fc:ca:66:ed:05:f2:96
+# Huella SHA1: b5:1c:06:7c:ee:2b:0c:3d:f8:55:ab:2d:92:f4:fe:39:d4:e7:0f:0e
+# Huella SHA256: 2c:e1:cb:0b:f9:d2:f9:e1:02:99:3f:be:21:51:52:c3:b2:dd:0c:ab:de:1c:68:e5:31:9b:83:91:54:db:b7:f5
 -----BEGIN CERTIFICATE-----
 MIID3TCCAsWgAwIBAgIBADANBgkqhkiG9w0BAQsFADCBjzELMAkGA1UEBhMCVVMx
 EDAOBgNVBAgTB0FyaXpvbmExEzARBgNVBAcTClNjb3R0c2RhbGUxJTAjBgNVBAoT
@@ -461,14 +461,14 @@ pL/QlwVKvOoYKAKQvVR4CSFx09F9HdkWsKlhPdAKACL8x3vLCWRFCztAgfd9fDL1
 mMpYjn0q7pBZc2T5NnReJaH1ZgUufzkVqSr7UIuOhWn0
 -----END CERTIFICATE-----
 
-# Operating CA: Sectigo
-# Issuer: CN=COMODO ECC Certification Authority O=COMODO CA Limited
-# Subject: CN=COMODO ECC Certification Authority O=COMODO CA Limited
-# Label: "COMODO ECC Certification Authority"
-# Serial: 41578283867086692638256921589707938090
-# MD5 Fingerprint: 7c:62:ff:74:9d:31:53:5e:68:4a:d5:78:aa:1e:bf:23
-# SHA1 Fingerprint: 9f:74:4e:9f:2b:4d:ba:ec:0f:31:2c:50:b6:56:3b:8e:2d:93:c3:11
-# SHA256 Fingerprint: 17:93:92:7a:06:14:54:97:89:ad:ce:2f:8f:34:f7:f0:b6:6d:0f:3a:e3:a3:b8:4d:21:ec:15:db:ba:4f:ad:c7
+# Autoridad certificadora: Sectigo
+# Emisor: CN=COMODO ECC Certification Authority O=COMODO CA Limited
+# Titular: CN=COMODO ECC Certification Authority O=COMODO CA Limited
+# Etiqueta: "COMODO ECC Certification Authority"
+# Número de serie: 41578283867086692638256921589707938090
+# Huella MD5: 7c:62:ff:74:9d:31:53:5e:68:4a:d5:78:aa:1e:bf:23
+# Huella SHA1: 9f:74:4e:9f:2b:4d:ba:ec:0f:31:2c:50:b6:56:3b:8e:2d:93:c3:11
+# Huella SHA256: 17:93:92:7a:06:14:54:97:89:ad:ce:2f:8f:34:f7:f0:b6:6d:0f:3a:e3:a3:b8:4d:21:ec:15:db:ba:4f:ad:c7
 -----BEGIN CERTIFICATE-----
 MIICiTCCAg+gAwIBAgIQH0evqmIAcFBUTAGem2OZKjAKBggqhkjOPQQDAzCBhTEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
@@ -486,14 +486,14 @@ fQjGGoe9GKhzvSbKYAydzpmfz1wPMOG+FDHqAjAU9JM8SaczepBGR7NjfRObTrdv
 GDeAU/7dIOA1mjbRxwG55tzd8/8dLDoWV9mSOdY=
 -----END CERTIFICATE-----
 
-# Operating CA: Sectigo
-# Issuer: CN=COMODO RSA Certification Authority O=COMODO CA Limited
-# Subject: CN=COMODO RSA Certification Authority O=COMODO CA Limited
-# Label: "COMODO RSA Certification Authority"
-# Serial: 101909084537582093308941363524873193117
-# MD5 Fingerprint: 1b:31:b0:71:40:36:cc:14:36:91:ad:c4:3e:fd:ec:18
-# SHA1 Fingerprint: af:e5:d2:44:a8:d1:19:42:30:ff:47:9f:e2:f8:97:bb:cd:7a:8c:b4
-# SHA256 Fingerprint: 52:f0:e1:c4:e5:8e:c6:29:29:1b:60:31:7f:07:46:71:b8:5d:7e:a8:0d:5b:07:27:34:63:53:4b:32:b4:02:34
+# Autoridad certificadora: Sectigo
+# Emisor: CN=COMODO RSA Certification Authority O=COMODO CA Limited
+# Titular: CN=COMODO RSA Certification Authority O=COMODO CA Limited
+# Etiqueta: "COMODO RSA Certification Authority"
+# Número de serie: 101909084537582093308941363524873193117
+# Huella MD5: 1b:31:b0:71:40:36:cc:14:36:91:ad:c4:3e:fd:ec:18
+# Huella SHA1: af:e5:d2:44:a8:d1:19:42:30:ff:47:9f:e2:f8:97:bb:cd:7a:8c:b4
+# Huella SHA256: 52:f0:e1:c4:e5:8e:c6:29:29:1b:60:31:7f:07:46:71:b8:5d:7e:a8:0d:5b:07:27:34:63:53:4b:32:b4:02:34
 -----BEGIN CERTIFICATE-----
 MIIF2DCCA8CgAwIBAgIQTKr5yttjb+Af907YWwOGnTANBgkqhkiG9w0BAQwFADCB
 hTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
@@ -529,14 +529,14 @@ QOhTsiedSrnAdyGN/4fy3ryM7xfft0kL0fJuMAsaDk527RH89elWsn2/x20Kk4yl
 NVOFBkpdn627G190
 -----END CERTIFICATE-----
 
-# Operating CA: Sectigo
-# Issuer: CN=USERTrust ECC Certification Authority O=The USERTRUST Network
-# Subject: CN=USERTrust ECC Certification Authority O=The USERTRUST Network
-# Label: "USERTrust ECC Certification Authority"
-# Serial: 123013823720199481456569720443997572134
-# MD5 Fingerprint: fa:68:bc:d9:b5:7f:ad:fd:c9:1d:06:83:28:cc:24:c1
-# SHA1 Fingerprint: d1:cb:ca:5d:b2:d5:2a:7f:69:3b:67:4d:e5:f0:5a:1d:0c:95:7d:f0
-# SHA256 Fingerprint: 4f:f4:60:d5:4b:9c:86:da:bf:bc:fc:57:12:e0:40:0d:2b:ed:3f:bc:4d:4f:bd:aa:86:e0:6a:dc:d2:a9:ad:7a
+# Autoridad certificadora: Sectigo
+# Emisor: CN=USERTrust ECC Certification Authority O=The USERTRUST Network
+# Titular: CN=USERTrust ECC Certification Authority O=The USERTRUST Network
+# Etiqueta: "USERTrust ECC Certification Authority"
+# Número de serie: 123013823720199481456569720443997572134
+# Huella MD5: fa:68:bc:d9:b5:7f:ad:fd:c9:1d:06:83:28:cc:24:c1
+# Huella SHA1: d1:cb:ca:5d:b2:d5:2a:7f:69:3b:67:4d:e5:f0:5a:1d:0c:95:7d:f0
+# Huella SHA256: 4f:f4:60:d5:4b:9c:86:da:bf:bc:fc:57:12:e0:40:0d:2b:ed:3f:bc:4d:4f:bd:aa:86:e0:6a:dc:d2:a9:ad:7a
 -----BEGIN CERTIFICATE-----
 MIICjzCCAhWgAwIBAgIQXIuZxVqUxdJxVt7NiYDMJjAKBggqhkjOPQQDAzCBiDEL
 MAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0plcnNl
@@ -554,14 +554,14 @@ zzuqQhFkoJ2UOQIReVx7Hfpkue4WQrO/isIJxOzksU0CMQDpKmFHjFJKS04YcPbW
 RNZu9YO6bVi9JNlWSOrvxKJGgYhqOkbRqZtNyWHa0V1Xahg=
 -----END CERTIFICATE-----
 
-# Operating CA: Sectigo
-# Issuer: CN=USERTrust RSA Certification Authority O=The USERTRUST Network
-# Subject: CN=USERTrust RSA Certification Authority O=The USERTRUST Network
-# Label: "USERTrust RSA Certification Authority"
-# Serial: 2645093764781058787591871645665788717
-# MD5 Fingerprint: 1b:fe:69:d1:91:b7:19:33:a3:72:a8:0f:e1:55:e5:b5
-# SHA1 Fingerprint: 2b:8f:1b:57:33:0d:bb:a2:d0:7a:6c:51:f7:0e:e9:0d:da:b9:ad:8e
-# SHA256 Fingerprint: e7:93:c9:b0:2f:d8:aa:13:e2:1c:31:22:8a:cc:b0:81:19:64:3b:74:9c:89:89:64:b1:74:6d:46:c3:d4:cb:d2
+# Autoridad certificadora: Sectigo
+# Emisor: CN=USERTrust RSA Certification Authority O=The USERTRUST Network
+# Titular: CN=USERTrust RSA Certification Authority O=The USERTRUST Network
+# Etiqueta: "USERTrust RSA Certification Authority"
+# Número de serie: 2645093764781058787591871645665788717
+# Huella MD5: 1b:fe:69:d1:91:b7:19:33:a3:72:a8:0f:e1:55:e5:b5
+# Huella SHA1: 2b:8f:1b:57:33:0d:bb:a2:d0:7a:6c:51:f7:0e:e9:0d:da:b9:ad:8e
+# Huella SHA256: e7:93:c9:b0:2f:d8:aa:13:e2:1c:31:22:8a:cc:b0:81:19:64:3b:74:9c:89:89:64:b1:74:6d:46:c3:d4:cb:d2
 -----BEGIN CERTIFICATE-----
 MIIF3jCCA8agAwIBAgIQAf1tMPyjylGoG7xkDjUDLTANBgkqhkiG9w0BAQwFADCB
 iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl
@@ -597,13 +597,13 @@ L6KCq9NjRHDEjf8tM7qtj3u1cIiuPhnPQCjY/MiQu12ZIvVS5ljFH4gxQ+6IHdfG
 jjxDah2nGN59PRbxYvnKkKj9
 -----END CERTIFICATE-----
 
-# Operating CA: SSL.com
-# Issuer: CN=SSL.com Client RSA Root CA 2022 O=SSL Corporation
-# Subject: CN=SSL.com Client RSA Root CA 2022 O=SSL Corporation
-# Label: SSL.com Client RSA Root CA 2022
-# Serial Number: 76AFEE88931545B650539B809CA4DF9A
-# SHA-1 Fingerprint: AA:59:70:E5:20:32:9F:CB:D0:D5:79:9F:FB:1B:82:1D:FD:1F:79:65
-# SHA-256 Fingerprint: 1D:4C:A4:A2:AB:21:D0:09:36:59:80:4F:C0:EB:21:75:A6:17:27:9B:56:A2:47:52:45:C9:51:7A:FE:B5:91:53
+# Autoridad certificadora: SSL.com
+# Emisor: CN=SSL.com Client RSA Root CA 2022 O=SSL Corporation
+# Titular: CN=SSL.com Client RSA Root CA 2022 O=SSL Corporation
+# Etiqueta: SSL.com Client RSA Root CA 2022
+# Número de serie: 76AFEE88931545B650539B809CA4DF9A
+# Huella SHA-1: AA:59:70:E5:20:32:9F:CB:D0:D5:79:9F:FB:1B:82:1D:FD:1F:79:65
+# Huella SHA-256: 1D:4C:A4:A2:AB:21:D0:09:36:59:80:4F:C0:EB:21:75:A6:17:27:9B:56:A2:47:52:45:C9:51:7A:FE:B5:91:53
 -----BEGIN CERTIFICATE-----
 MIIFjzCCA3egAwIBAgIQdq/uiJMVRbZQU5uAnKTfmjANBgkqhkiG9w0BAQsFADBR
 MQswCQYDVQQGEwJVUzEYMBYGA1UECgwPU1NMIENvcnBvcmF0aW9uMSgwJgYDVQQD
@@ -637,13 +637,13 @@ Pr/k1rPZCMM91TMygSTFqeFlEbgyMzBxGEkdGkXGmhSKWDkobvPLUblJJmR4A8eR
 EYOpuZA0tm+qBZ6FKFeZvn8nBkliTaH8CeErRglMFJtWj0U=
 -----END CERTIFICATE-----
 
-# Operating CA: SSL.com
-# Issuer: CN=SSL.com Client ECC Root CA 2022 O=SSL Corporation
-# Subject: CN=SSL.com Client ECC Root CA 2022 O=SSL Corporation
-# Label: SSL.com Client ECC Root CA 2022
-# Serial Number: 76F8481EAEF03C701FE03F25540183D5
-# SHA-1 Fingerprint: 80:7B:1D:9D:65:72:3D:C7:56:F9:EC:C5:00:83:49:F6:F2:AC:F4:86
-# SHA-256 Fingerprint: AD:7D:D5:8D:03:AE:DB:22:A3:0B:50:84:39:49:20:CE:12:23:0C:2D:80:17:AD:9B:81:AB:04:07:9B:DD:02:6B
+# Autoridad certificadora: SSL.com
+# Emisor: CN=SSL.com Client ECC Root CA 2022 O=SSL Corporation
+# Titular: CN=SSL.com Client ECC Root CA 2022 O=SSL Corporation
+# Etiqueta: SSL.com Client ECC Root CA 2022
+# Número de serie: 76F8481EAEF03C701FE03F25540183D5
+# Huella SHA-1: 80:7B:1D:9D:65:72:3D:C7:56:F9:EC:C5:00:83:49:F6:F2:AC:F4:86
+# Huella SHA-256: AD:7D:D5:8D:03:AE:DB:22:A3:0B:50:84:39:49:20:CE:12:23:0C:2D:80:17:AD:9B:81:AB:04:07:9B:DD:02:6B
 -----BEGIN CERTIFICATE-----
 MIICQDCCAcagAwIBAgIQdvhIHq7wPHAf4D8lVAGD1TAKBggqhkjOPQQDAzBRMQsw
 CQYDVQQGEwJVUzEYMBYGA1UECgwPU1NMIENvcnBvcmF0aW9uMSgwJgYDVQQDDB9T

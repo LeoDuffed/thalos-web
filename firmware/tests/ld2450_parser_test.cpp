@@ -48,7 +48,7 @@ int main() {
 
   assert(feed(parser, emptyFrame(), frame) == 1);
   assert(frame.targetCount == 0);
-  assert(!frame.targets[0].active);  // Old detections must be cleared.
+  assert(!frame.targets[0].active);  // Las detecciones anteriores deben borrarse.
 
   Bytes three = manufacturerExample();
   for (size_t slot = 1; slot < 3; ++slot) {

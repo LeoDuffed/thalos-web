@@ -28,9 +28,9 @@ struct RadarFrame {
   uint8_t targetCount = 0;
 };
 
-// HLK-LD2450 protocol V1.03, section 2.3:
-// AA FF 03 00 + three 8-byte target slots + 55 CC.
-// A sliding window re-synchronizes after partial frames, noise or bad trailers.
+// Protocolo HLK-LD2450 V1.03, sección 2.3:
+// AA FF 03 00 + tres ranuras de objetivos de 8 bytes + 55 CC.
+// Una ventana deslizante recupera la sincronización tras tramas incompletas, ruido o finales incorrectos.
 class Ld2450Parser {
  public:
   static const size_t kFrameSize = 30;
@@ -83,4 +83,4 @@ class Ld2450Parser {
   uint32_t invalidFrames_ = 0;
 };
 
-}  // namespace thalos
+}  // Espacio de nombres thalos

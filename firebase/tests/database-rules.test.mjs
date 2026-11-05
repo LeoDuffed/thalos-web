@@ -1,5 +1,5 @@
-// Runs ONLY against the local emulator. No real credentials or cloud writes.
-// Start the official RTDB emulator on 127.0.0.1:9005 first.
+// Se ejecuta SOLO contra el emulador local. No usa credenciales reales ni escribe en la nube.
+// Inicia primero el emulador oficial de Realtime Database en 127.0.0.1:9005.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'

@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Bot,
   CheckCircle2,
   CircuitBoard,
   Cloud,
@@ -17,57 +16,57 @@ const layers = [
     icon: Radar,
     eyebrow: "CAPA 01",
     title: "Detección",
-    text: "Los robots móviles recorren la planta y utilizan sensores para detectar presencia y estimar distancias.",
+    text: "El HLK-LD2450 entrega coordenadas y velocidad de hasta tres objetivos. Las primeras pruebas se realizan con el sensor fijo.",
   },
   {
     icon: Cpu,
     eyebrow: "CAPA 02",
     title: "Procesamiento local",
-    text: "Cada carrito analiza las lecturas de sus sensores y envía las detecciones relevantes al cerebro central.",
+    text: "La ESP32 lee el radar por UART, interpreta las tramas y prepara un reporte con las mediciones válidas.",
   },
   {
-    icon: CircuitBoard,
+    icon: Database,
     eyebrow: "CAPA 03",
-    title: "Coordinación",
-    text: "La NUCLEO-H755ZI-Q reúne la información de la flota e identifica cuándo una persona se acerca a una zona peligrosa.",
+    title: "Datos en Firebase",
+    text: "La ESP32 envía los reportes por WiFi y HTTPS. Firebase Realtime Database conserva la última lectura y el estado del dispositivo.",
   },
   {
     icon: Cloud,
     eyebrow: "CAPA 04",
     title: "Supervisión",
-    text: "La plataforma web muestra las detecciones, las alertas y las solicitudes de paro de maquinaria registradas en la bse de datos.",
+    text: "La página escucha los cambios en Firebase y actualiza el radar, la tabla de objetivos y los indicadores de conexión.",
   },
 ]
 
 const requirements = [
-  "Clasificación humano, animal y objeto",
-  "Estimación de distancia y orientación",
-  "Conteo aproximado de personas",
-  "Cobertura mínima de cinco metros",
-  "Comunicación en tiempo real con Firebase",
-  "Diseño e integración en PCB propia",
+  "Lectura real del HLK-LD2450 con ESP32",
+  "Visualización de posición, distancia y ángulo",
+  "Conteo de objetivos reportados por el radar",
+  "Consulta de la velocidad de cada objetivo",
+  "Actualización en tiempo real mediante Firebase",
+  "Estado independiente de ESP32, radar y base de datos",
 ]
 
 const validation = [
   {
     id: "01",
-    title: "Caracterizar",
-    text: "Recopilaremos señales de personas, animales y objetos a distintas distancias para conocer cómo responden los sensores.",
+    title: "Leer el sensor",
+    text: "Ya recibimos tramas reales del HLK-LD2450 en la ESP32 y comprobamos el cambio de coordenadas y el conteo de objetivos.",
   },
   {
     id: "02",
-    title: "Clasificar",
-    text: "Desarrollaremos un método para identificar posibles personas y asignar un nivel de confianza a cada detección.",
+    title: "Conectar",
+    text: "Validamos el envío por WiFi a Firebase tanto en casa como en la escuela, con la cuenta dedicada del dispositivo.",
   },
   {
     id: "03",
-    title: "Integrar",
-    text: "Conectaremos los robots con la NUCLEO-H755ZI-Q, la base de datos y la interfaz que solicitará el paro de maquinaria.",
+    title: "Mostrar",
+    text: "El centro de control ya muestra lecturas reales, distingue los datos caducados y presenta el radar en vista espejo.",
   },
   {
     id: "04",
-    title: "Validar",
-    text: "Mediremos alcance, errores y tiempo de respuesta. También probaremos la solicitud de paro cuando una persona entre en una zona de riesgo.",
+    title: "Caracterizar",
+    text: "El siguiente paso es probar distintas posiciones, distancias y entornos para medir estabilidad, alcance y tiempo de respuesta antes de incorporar más sensores.",
   },
 ]
 
@@ -81,11 +80,11 @@ export function SolutionPage() {
           </p>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
             <h1 className="max-w-3xl text-5xl font-medium leading-[1] tracking-[-0.06em] sm:text-7xl">
-              Una red móvil alrededor de las personas.
+              Un robot. Del sensor a la pantalla.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-white/60">
-              Cada vehículo percibe una parte del entorno. El coordinador reúne esas perspectivas y
-              las convierte en una vista compartida de la planta.
+              El prototipo actual une un radar HLK-LD2450, una ESP32 y Firebase.
+              La primera integración permite consultar las mediciones del sensor desde el centro de control.
             </p>
           </div>
         </div>
@@ -117,23 +116,23 @@ export function SolutionPage() {
           <div>
             <p className="section-label">FLUJO DE INFORMACIÓN</p>
             <h2 className="mt-4 text-4xl font-medium tracking-[-0.05em] sm:text-5xl">
-              Distribuido en campo. Unificado en la nube.
+              Una lectura, de extremo a extremo.
             </h2>
             <p className="mt-5 max-w-xl leading-relaxed text-neutral-600">
-              El procesamiento se reparte para reducir la dependencia de un solo sensor. La nube
-              recibe eventos compactos, no video ni información biométrica.
+              La ESP32 interpreta los datos del radar y los envía por WiFi. Firebase actualiza
+              la última medición y la página la representa en un mapa y una tabla. En esta etapa guardamos el estado más reciente.
             </p>
           </div>
           <div className="rounded-2xl bg-[#121212] p-5 text-white sm:p-8">
             <div className="space-y-3">
               {[
-                { icon: Bot, title: "Flota de robots", detail: "Rb-01 · Rb-02 · Rb-03" },
-                { icon: CircuitBoard, title: "Coordinador maestro", detail: "NUCLEO-H755ZI-Q" },
-                { icon: Wifi, title: "Enlace industrial", detail: "WiFi · Mensajes estructurados" },
+                { icon: Radar, title: "Radar HLK-LD2450", detail: "Posición y velocidad · Robot 01 fijo" },
+                { icon: CircuitBoard, title: "ESP32", detail: "Lectura por UART · Reportes por HTTPS" },
+                { icon: Wifi, title: "Conexión WiFi", detail: "Envío de lecturas a Firebase" },
                 {
                   icon: Database,
-                  title: "Base de datos",
-                  detail: "Estado actual · Historial de eventos",
+                  title: "Firebase y centro de control",
+                  detail: "Última lectura · Visualización en tiempo real",
                 },
               ].map(({ icon: Icon, title, detail }, index) => (
                 <div
@@ -158,9 +157,9 @@ export function SolutionPage() {
       <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
           <div>
-            <p className="section-label">ALCANCE DEL RETO</p>
+            <p className="section-label">FUNCIONES ACTUALES</p>
             <h2 className="mt-4 text-4xl font-medium tracking-[-0.05em]">
-              Diseñado alrededor de los requisitos.
+              La primera integración ya funciona.
             </h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -182,15 +181,15 @@ export function SolutionPage() {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="flex items-center gap-2 text-xs font-medium tracking-[0.18em] text-white/45">
-                <FlaskConical className="size-4" /> PLAN DE VALIDACIÓN
+                <FlaskConical className="size-4" /> AVANCES Y SIGUIENTES PASOS
               </p>
               <h2 className="mt-4 text-4xl font-medium tracking-[-0.05em] sm:text-5xl">
-                Medir antes de prometer.
+                Una base para seguir probando.
               </h2>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-white/50">
-              La clasificación se comunicará siempre con su nivel de confianza y será evaluada en
-              escenarios controlados.
+              La comunicación ya está validada. Ahora seguimos caracterizando el sensor
+              con el robot fijo para entender sus lecturas en distintos escenarios.
             </p>
           </div>
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-4">
@@ -206,7 +205,7 @@ export function SolutionPage() {
             className="mt-10 inline-flex h-12 items-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-black"
             to="/dashboard"
           >
-            Ver datos de ejemplo <ArrowRight className="size-4" />
+            Ver lecturas del sensor <ArrowRight className="size-4" />
           </Link>
         </div>
       </section>

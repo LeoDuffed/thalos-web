@@ -6,7 +6,7 @@
 int main() {
   thalos::RadarSnapshot snapshot;
   JsonDocument patch;
-  // No UART frame must publish only a heartbeat, never a fabricated count zero.
+  // Sin una trama UART solo se publica el estado de la placa, nunca un cero inventado.
   assert(!thalos::buildDevicePatch(patch, snapshot, 1000, false, 0, -50));
   assert(patch["status"]["lastSeenAt"][".sv"] == "timestamp");
   assert(patch["sensors/ld2450"].isNull());
@@ -14,7 +14,7 @@ int main() {
   snapshot.hasReading = true;
   snapshot.receivedAtMs = 1000;
   snapshot.sequence = 12;
-  // Before the clock is synchronized, radar timestamps are unavailable.
+  // Las horas de captura del radar no están disponibles hasta sincronizar el reloj.
   assert(!thalos::buildDevicePatch(patch, snapshot, 1001, false, 0, -50));
   snapshot.capturedAtUnixMs = 1800000000123LL;
   snapshot.frame.targetCount = 1;
@@ -29,12 +29,12 @@ int main() {
   assert(patch["sensors/ld2450"]["targets"]["3"]["xMm"] == -782);
   assert(patch["sensors/ld2450"]["targets"]["3"]["speedCms"] == -16);
   assert(patch["sensors/ld2450"]["targets"]["1"].isNull());
-  // Same sequence is not uploaded twice; a stale failed upload is not retried.
+  // No se envía dos veces la misma secuencia ni se reintenta una lectura ya caducada.
   assert(!thalos::buildDevicePatch(patch, snapshot, 1100, true, 12, -50));
   assert(!thalos::buildDevicePatch(patch, snapshot, 2001, false, 0, -50));
   assert(patch["sensors/ld2450"].isNull());
 
-  // A new valid zero-target frame replaces the entire radar node without slots.
+  // Una nueva trama válida sin objetivos reemplaza el nodo del radar sin dejar ranuras antiguas.
   snapshot.frame = thalos::RadarFrame{};
   snapshot.sequence = 13;
   snapshot.receivedAtMs = 2100;
@@ -42,7 +42,7 @@ int main() {
   assert(patch["sensors/ld2450"]["targetCount"] == 0);
   assert(patch["sensors/ld2450"]["targets"].isNull());
 
-  // Millis wraparound must preserve the age and sequence checks.
+  // El desbordamiento de millis debe conservar las comprobaciones de antigüedad y secuencia.
   snapshot.receivedAtMs = UINT32_MAX - 100;
   assert(thalos::hasNewFreshReading(snapshot, 20, true, 12));
   assert(!thalos::hasNewFreshReading(snapshot, 1100, true, 12));

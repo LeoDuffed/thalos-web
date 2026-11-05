@@ -36,7 +36,7 @@ export function parseRadarReading(value: unknown): RadarReading | null {
   const entries = data.targets !== null && typeof data.targets === "object" ? Object.entries(data.targets) : []
   if (data.targets != null && typeof data.targets !== "object") malformed = true
   for (const [key, raw] of entries) {
-    if (raw == null) continue // Numeric Firebase keys can be returned as a sparse array.
+    if (raw == null) continue // Firebase puede devolver las claves numéricas como un arreglo con posiciones vacías.
     const target = object(raw)
     if (target.active === false) continue
     const slot = Number(key)
