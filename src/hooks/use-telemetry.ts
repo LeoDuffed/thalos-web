@@ -48,7 +48,7 @@ export function useTelemetry() {
         unsubscribers.push(onValue(ref(database, ".info/connected"), (snapshot) => {
           if (!active || failed) return
           const connected = snapshot.val() === true
-          setState((previous) => previous.connected === connected ? previous : withActivity({ ...previous, connected }, connected ? "Firebase conectado" : "Conexión interrumpida", connected ? "Lectura de telemetría disponible." : "Se conservan las últimas lecturas como historial."))
+          setState((previous) => previous.connected === connected ? previous : withActivity({ ...previous, connected }, connected ? "Firebase conectado" : "Conexión interrumpida", connected ? "Lectura de telemetría disponible." : "Los objetivos se ocultan hasta recibir una lectura vigente."))
         }))
         unsubscribers.push(onValue(ref(database, ".info/serverTimeOffset"), (snapshot) => {
           const offset: unknown = snapshot.val()

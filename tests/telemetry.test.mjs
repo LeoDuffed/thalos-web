@@ -95,3 +95,24 @@ test("a device ID cannot escape the intended Firebase path", () => {
   assert.equal(readDeviceId("robot-01"), "robot-01")
   for (const value of ["../secret", "robot/a", "robot#1", "a.b"]) assert.throws(() => readDeviceId(value), { code: "app/invalid-device" })
 })
+
+
+test("los objetivos desaparecen al caducar la lectura sin borrar el último reporte", () => {
+  const reading = parseRadarReading(frame());
+  assert.equal(getReadingState(reading, status, now, true).targets.length, 1);
+  for (const state of [
+    getReadingState(reading, status, now + SENSOR_TIMEOUT_MS + 1, true),
+    getReadingState(reading, status, now + 16 * 86400_000, true),
+    getReadingState(reading, status, now, false),
+    getReadingState(reading, parseDeviceStatus(null), now, true),
+    getReadingState(parseRadarReading(frame({ updatedAt: now + 30_000 })), status, now, true),
+  ]) {
+    assert.equal(state.current, false);
+    assert.deepEqual(state.targets, []);
+  }
+  assert.equal(reading.updatedAt, now);
+  assert.equal(reading.targets.length, 1);
+  const empty = getReadingState(parseRadarReading(frame({ targetCount: 0, targets: null })), status, now, true);
+  assert.equal(empty.current, true);
+  assert.deepEqual(empty.targets, []);
+});

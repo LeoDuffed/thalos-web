@@ -73,7 +73,8 @@ export function getReadingState(reading: RadarReading | null, status: DeviceStat
   const espOnline = connected && isRecent(status.lastSeenAt, now, ESP_TIMEOUT_MS)
   const fresh = connected && reading?.valid === true && isRecent(reading.updatedAt, now)
   const current = fresh && (reading.source === "simulated" || (reading.source === "sensor" && espOnline))
-  return { espOnline, fresh, current, sensorOnline: current && reading?.source === "sensor" }
+  // solo entregamos objetivos para dibujar si la lectura sigue vigente
+  return { espOnline, fresh, current, sensorOnline: current && reading?.source === "sensor", targets: current && reading ? reading.targets : [] }
 }
 export function targetInView(target: RadarTarget) { return target.yMm >= 0 && target.distanceM <= 6 && Math.abs(target.angleDeg) <= 60 }
 export function formatTime(time: number | null) { return time === null ? "Sin reporte" : new Date(time).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) }

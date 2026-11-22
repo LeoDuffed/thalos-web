@@ -14,12 +14,12 @@ function arc(radius: number) {
 
 export function RadarView({ targets, selectedSlot, current, onSelect }: { targets: RadarTarget[]; selectedSlot: number | null; current: boolean; onSelect: (slot: number) => void }) {
   const clipId = useId()
-  const visible = targets.filter(targetInView)
+  const visible = current ? targets.filter(targetInView) : []
   return (
     <section className="overflow-hidden rounded-2xl border border-black/10 bg-[#121212] text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-5 sm:px-6">
         <div><h2 className="text-base font-medium">Campo de detección</h2><p className="mt-1 text-xs text-white/45">Vista superior  </p></div>
-        <span className="rounded-md border border-white/15 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white/60">{current ? "LECTURA VIGENTE" : targets.length ? "ÚLTIMA LECTURA" : "ESPERANDO DATOS"}</span>
+        <span className="rounded-md border border-white/15 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white/60">{current ? "LECTURA VIGENTE" : "SIN LECTURA VIGENTE"}</span>
       </div>
       <div className="relative px-2 pt-3 sm:px-5">
         <svg viewBox="0 0 800 550" className="block w-full" role="group" aria-label="Radar frontal en vista espejo, de 6 metros y 120 grados. Los puntos indican los objetivos reportados.">
@@ -56,7 +56,7 @@ export function RadarView({ targets, selectedSlot, current, onSelect }: { target
           <path d="M 392 470 L 408 470 M 400 462 L 400 478" stroke="#121212" strokeWidth="2" />
           <text x="448" y="476" fill="#999" fontSize="10" letterSpacing="1">SENSOR / ROBOT 01</text>
         </svg>
-        {targets.length === 0 && <div className="pointer-events-none absolute inset-x-6 top-[40%] text-center"><Radar className="mx-auto size-7 text-white/35" aria-hidden="true" /><p className="mt-3 text-sm text-white/55">{current ? "Sin objetivos en esta lectura" : "Esperando la primera lectura del sensor"}</p></div>}
+        {visible.length === 0 && targets.length === 0 && <div className="pointer-events-none absolute inset-x-6 top-[40%] text-center"><Radar className="mx-auto size-7 text-white/35" aria-hidden="true" /><p className="mt-3 text-sm text-white/55">{current ? "Sin objetivos en esta lectura" : "Esperando una lectura vigente del sensor"}</p></div>}
       </div>
     </section>
   )
