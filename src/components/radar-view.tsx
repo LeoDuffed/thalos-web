@@ -15,7 +15,6 @@ function arc(radius: number) {
 export function RadarView({ targets, selectedSlot, current, onSelect }: { targets: RadarTarget[]; selectedSlot: number | null; current: boolean; onSelect: (slot: number) => void }) {
   const clipId = useId()
   const visible = targets.filter(targetInView)
-  const outside = targets.length - visible.length
   return (
     <section className="overflow-hidden rounded-2xl border border-black/10 bg-[#121212] text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-5 sm:px-6">

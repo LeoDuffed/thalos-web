@@ -8,6 +8,8 @@ import "./App.css"
 
 const DashboardPage = lazy(() => import("@/pages/dashboard-page").then((module) => ({ default: module.DashboardPage })))
 
+const TestingPage = lazy(() => import("@/pages/testing-page").then((module) => ({ default: module.TestingPage })))
+
 function ScrollToTop() {
   const { pathname } = useLocation()
 
@@ -28,6 +30,7 @@ function AppShell() {
           <Route path="/" element={<HomePage />} />
           <Route path="/solucion" element={<SolutionPage />} />
           <Route path="/dashboard" element={<Suspense fallback={<p role="status" className="mx-auto max-w-7xl px-5 py-12 text-sm text-neutral-500">Cargando centro de control…</p>}><DashboardPage /></Suspense>} />
+          <Route path="/testing" element={<Suspense fallback={<p role="status" className="mx-auto max-w-7xl px-5 py-12 text-sm text-neutral-500">Cargando laboratorio térmico…</p>}><TestingPage /></Suspense>} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>

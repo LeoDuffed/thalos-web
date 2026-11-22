@@ -6,6 +6,7 @@ import { BrandMark } from "@/components/brand-mark"
 const navigation = [
   { label: "Inicio", to: "/" },
   { label: "Solución", to: "/solucion" },
+  { label: "Testing", to: "/testing" },
 ]
 
 export function SiteHeader() {

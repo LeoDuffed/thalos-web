@@ -47,7 +47,7 @@ const target = { active: true, xMm: -782, yMm: 1713, speedCms: -16, resolutionMm
 const radar = (targets = { 1: target }) => ({ model: 'HLK-LD2450', source: 'sensor', updatedAt: Date.now(), sequence: 42, targetCount: Object.keys(targets).length, ...(Object.keys(targets).length ? { targets } : {}) })
 const status = () => ({ lastSeenAt: { '.sv': 'timestamp' }, firmware: 'test/1.0', wifiRssiDbm: -50 })
 
-test('Firebase rules enforce reader/device boundaries and valid radar frames', async t => {
+test('Firebase rules enforce reader/device boundaries and valid radar/thermal frames', async t => {
   await allowed('/.settings/rules', 'PUT', JSON.parse(rules), 'owner')
   await allowed('', 'PUT', null, 'owner')
   await t.test('writer can atomically publish heartbeat and radar', async () => {
@@ -109,4 +109,51 @@ test('Firebase rules enforce reader/device boundaries and valid radar frames', a
     const after = await allowed(radarPath, 'GET', undefined, anonymous)
     assert.deepEqual(after, before)
   })
+  const thermalPath = `${device}/sensors/amg8831`
+  const thermal = (changes = {}) => ({ model: 'AMG8831', source: 'sensor', unit: 'centicelsius', width: 8, height: 8, updatedAt: Date.now(), sequence: 9, pixels: Array.from({ length: 64 }, (_, i) => i === 0 ? -25 : 2000 + i * 25), ...changes })
+  await t.test('thermal writer publishes 64 pixels atomically without replacing radar', async () => {
+    await allowed(radarPath, 'PUT', radar(), writer)
+    const before = await allowed(radarPath, 'GET', undefined, anonymous)
+    const data = thermal()
+    await allowed(device, 'PATCH', { status: status(), 'sensors/amg8831': data }, writer)
+    assert.deepEqual(await allowed(thermalPath, 'GET', undefined, anonymous), data)
+    assert.deepEqual(await allowed(radarPath, 'GET', undefined, anonymous), before)
+  })
+  await t.test('thermal frames require all 64 pixels and reject additional indexes', async () => {
+    for (const length of [0, 63, 65]) await denied(thermalPath, 'PUT', thermal({ pixels: Array(length).fill(2500) }), writer)
+    const missing = Object.fromEntries(Array.from({ length: 64 }, (_, i) => [i, 2500]))
+    delete missing[10]
+    await denied(thermalPath, 'PUT', thermal({ pixels: missing }), writer)
+    const extra = { ...Object.fromEntries(Array.from({ length: 64 }, (_, i) => [i, 2500])), '01': 2500 }
+    await denied(thermalPath, 'PUT', thermal({ pixels: extra }), writer)
+    await denied(`${thermalPath}/pixels/0`, 'DELETE', undefined, writer)
+    await denied(`${thermalPath}/pixels`, 'DELETE', undefined, writer)
+    await denied(thermalPath, 'DELETE', undefined, writer)
+  })
+  await t.test('thermal source, unit, dimensions, timestamps and values are validated', async () => {
+    for (const changes of [{ model: 'other' }, { source: 'simulated' }, { unit: 'celsius' }, { width: 7 }, { height: 9 }, { updatedAt: Date.now() - 60000 }, { updatedAt: Date.now() + 60000 }, { sequence: -1 }, { sequence: 4294967296 }, { password: 'secret' }]) {
+      await denied(thermalPath, 'PUT', thermal(changes), writer)
+    }
+    for (const value of [null, '2500', true, 2500.5, -51201, 51176]) {
+      await denied(thermalPath, 'PUT', thermal({ pixels: [value, ...Array(63).fill(2500)] }), writer)
+    }
+    await allowed(thermalPath, 'PUT', thermal({ pixels: Array(64).fill(0) }), writer)
+  })
+  await t.test('thermal writes are limited to the device account and robot', async () => {
+    await denied(thermalPath, 'PUT', thermal())
+    await denied(thermalPath, 'PUT', thermal(), anonymous)
+    await denied(thermalPath, 'PUT', thermal(), other)
+    await denied('/telemetry/devices/robot-02/sensors/amg8831', 'PUT', thermal(), writer)
+  })
+  await t.test('heartbeat preserves thermal capture time and incomplete patches are atomic', async () => {
+    await allowed(thermalPath, 'PUT', thermal(), writer)
+    const before = await allowed(thermalPath, 'GET', undefined, anonymous)
+    await allowed(device, 'PATCH', { status: status() }, writer)
+    assert.deepEqual(await allowed(thermalPath, 'GET', undefined, anonymous), before)
+    const previousStatus = await allowed(`${device}/status`, 'GET', undefined, anonymous)
+    await denied(device, 'PATCH', { status: status(), 'sensors/amg8831': thermal({ pixels: [2500] }) }, writer)
+    assert.deepEqual(await allowed(`${device}/status`, 'GET', undefined, anonymous), previousStatus)
+    assert.deepEqual(await allowed(thermalPath, 'GET', undefined, anonymous), before)
+  })
+
 })

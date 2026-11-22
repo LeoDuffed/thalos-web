@@ -67,6 +67,40 @@
               "$other": {
                 ".validate": false
               }
+            },
+            "amg8831": {
+              ".write": "auth != null && auth.uid === 'zAvi8jSz0eSn5T0vL4ECA1nQGns1' && newData.exists()",
+              ".validate": "newData.hasChildren(['model', 'source', 'unit', 'width', 'height', 'updatedAt', 'sequence', 'pixels'])",
+              "model": {
+                ".validate": "newData.val() === 'AMG8831'"
+              },
+              "source": {
+                ".validate": "newData.val() === 'sensor'"
+              },
+              "unit": {
+                ".validate": "newData.val() === 'centicelsius'"
+              },
+              "width": {
+                ".validate": "newData.val() === 8"
+              },
+              "height": {
+                ".validate": "newData.val() === 8"
+              },
+              "updatedAt": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 8640000000000000 && newData.val() <= now + 2000 && newData.val() >= now - 15000"
+              },
+              "sequence": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 4294967295"
+              },
+              "pixels": {
+                ".validate": "newData.hasChildren(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63'])",
+                "$index": {
+                  ".validate": "$index.matches(/^([0-9]|[1-5][0-9]|6[0-3])$/) && newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= -51200 && newData.val() <= 51175"
+                }
+              },
+              "$other": {
+                ".validate": false
+              }
             }
           }
         }

@@ -1,0 +1,301 @@
+#include <Arduino.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <sys/time.h>
+#include "thalos_config.h"
+#include "../ld2450_firebase/GoogleRoots.h"
+#include "ThermalTelemetryPayload.h"
+#include "../nucleo_uart_test/ThermalFrameParser.h"
+
+constexpr int kNucleoRxPin = 16;
+constexpr int kNucleoTxPin = 17;
+constexpr uint32_t kPublishIntervalMs = 500;
+constexpr uint32_t kHeartbeatIntervalMs = 2000;
+constexpr int64_t kMinimumClockMs = 1700000000000LL;
+
+HardwareSerial NucleoSerial(2);
+thalos::ThermalFrameParser parser;
+thalos::ThermalSnapshot latest;
+portMUX_TYPE snapshotMux = portMUX_INITIALIZER_UNLOCKED;
+
+int64_t unixMilliseconds() {
+  timeval time;
+  gettimeofday(&time, nullptr);
+  const int64_t ms = int64_t(time.tv_sec) * 1000 + time.tv_usec / 1000;
+  return ms >= kMinimumClockMs ? ms : 0;
+}
+
+thalos::ThermalSnapshot readSnapshot() {
+  portENTER_CRITICAL(&snapshotMux);
+  const thalos::ThermalSnapshot copy = latest;
+  portEXIT_CRITICAL(&snapshotMux);
+  return copy;
+}
+
+String encodeQuery(const String& input) {
+  const char hex[] = "0123456789ABCDEF";
+  String output;
+  output.reserve(input.length() * 3);
+  for (size_t i = 0; i < input.length(); ++i) {
+    const uint8_t c = static_cast<uint8_t>(input[i]);
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+        (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '~') {
+      output += char(c);
+    } else {
+      output += '%'; output += hex[c >> 4]; output += hex[c & 15];
+    }
+  }
+  return output;
+}
+
+void configureHttps(WiFiClientSecure& client, HTTPClient& http) {
+  client.setCACert(kGoogleRoots);
+  client.setHandshakeTimeout(6);
+  http.setConnectTimeout(5000);
+  http.setTimeout(5000);
+  // Las peticiones tienen un tiempo límite; cada reintento toma una muestra nueva.
+  http.setReuse(false);
+}
+
+class FirebaseSession {
+ public:
+  bool needsAuthentication() const {
+    return !idToken_.length() || uint32_t(millis() - obtainedAt_) >= validForMs_;
+  }
+
+  bool ready() {
+    return !needsAuthentication() || signInOrRefresh();
+  }
+
+  const String& idToken() const { return idToken_; }
+
+  void expireToken() { idToken_ = ""; }
+
+ private:
+  String idToken_;
+  String refreshToken_;
+  uint32_t obtainedAt_ = 0;
+  uint32_t validForMs_ = 0;
+
+  bool signInOrRefresh() {
+    const bool refreshing = refreshToken_.length() > 0;
+    const String url = refreshing
+        ? String("https://securetoken.googleapis.com/v1/token?key=") + kFirebaseApiKey
+        : String("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=") + kFirebaseApiKey;
+    String body;
+    if (refreshing) {
+      body = "grant_type=refresh_token&refresh_token=" + encodeQuery(refreshToken_);
+    } else {
+      JsonDocument credentials;
+      credentials["email"] = kFirebaseEmail;
+      credentials["password"] = kFirebasePassword;
+      credentials["returnSecureToken"] = true;
+      serializeJson(credentials, body);
+    }
+    WiFiClientSecure client;
+    HTTPClient http;
+    configureHttps(client, http);
+    if (!http.begin(client, url)) return false;
+    http.addHeader("Content-Type", refreshing ? "application/x-www-form-urlencoded" : "application/json");
+    const int code = http.POST(body);
+    // Nunca imprimir la URL de la petición, el cuerpo de respuesta, el correo, la contraseña ni los tokens.
+    body = "";
+    if (code != HTTP_CODE_OK) {
+      Serial.printf("Firebase: acceso no completado (HTTP %d). Revisar cuenta, red y hora.\n", code);
+      if (refreshing && code == HTTP_CODE_BAD_REQUEST) refreshToken_ = "";
+      http.end();
+      return false;
+    }
+    JsonDocument result;
+    const auto error = deserializeJson(result, http.getString());
+    http.end();
+    if (error) {
+      Serial.println("Firebase: respuesta de acceso incompleta.");
+      return false;
+    }
+    const char* uid = result[refreshing ? "user_id" : "localId"] | "";
+    const char* token = result[refreshing ? "id_token" : "idToken"] | "";
+    const char* refresh = result[refreshing ? "refresh_token" : "refreshToken"] | "";
+    const uint32_t seconds = String(result[refreshing ? "expires_in" : "expiresIn"] | "0").toInt();
+    if (String(uid) != kFirebaseExpectedUid || !token[0] || !refresh[0] || seconds <= 60 || seconds > 86400) {
+      Serial.println("Firebase: cuenta o respuesta inesperada. Verifica el UID configurado.");
+      idToken_ = ""; refreshToken_ = "";
+      return false;
+    }
+    idToken_ = token;
+    refreshToken_ = refresh;
+    obtainedAt_ = millis();
+    validForMs_ = (seconds - 60) * 1000;
+    Serial.println(refreshing ? "Firebase: sesion renovada." : "Firebase: cuenta de la ESP32 autenticada.");
+    return true;
+  }
+};
+
+void uploadTask(void*) {
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+  WiFi.begin(kWifiSsid, kWifiPassword);
+  Serial.println("WiFi: conectando...");
+  FirebaseSession session;
+  WiFiClientSecure client;
+  HTTPClient http;
+  configureHttps(client, http);
+  http.setReuse(true);
+  uint32_t lastWifiTry = millis();
+  uint32_t lastAttempt = 0;
+  uint32_t retryDelay = kPublishIntervalMs;
+  uint32_t lastHeartbeat = 0;
+  uint32_t lastLog = 0;
+  uint32_t lastPublishedSequence = 0;
+  bool hasPublished = false;
+  bool wifiWasConnected = false;
+  bool clockRequested = false;
+
+  for (;;) {
+    vTaskDelay(pdMS_TO_TICKS(20));
+    uint32_t now = millis();
+    if (WiFi.status() != WL_CONNECTED) {
+      if (wifiWasConnected) {
+        Serial.println("WiFi: conexion perdida; se siguen leyendo tramas por UART.");
+        client.stop();
+      }
+      wifiWasConnected = false;
+      if (uint32_t(now - lastWifiTry) >= 15000) {
+        lastWifiTry = now;
+        WiFi.disconnect();
+        WiFi.begin(kWifiSsid, kWifiPassword);
+        Serial.println("WiFi: reintentando conexion...");
+      }
+      continue;
+    }
+    if (!wifiWasConnected) {
+      wifiWasConnected = true;
+      Serial.println("WiFi: conectado. Preparando HTTPS...");
+      retryDelay = kPublishIntervalMs;
+    }
+    if (!clockRequested) {
+      configTime(0, 0, "time.google.com", "pool.ntp.org", "time.cloudflare.com");
+      clockRequested = true;
+      Serial.println("Hora: sincronizando para verificar certificados HTTPS...");
+    }
+    if (!unixMilliseconds()) {
+      if (uint32_t(now - lastLog) >= 15000) {
+        lastLog = now;
+        Serial.println("Hora: esperando sincronizacion; revisa que la red permita acceso a Internet.");
+      }
+      continue;
+    }
+    if (uint32_t(now - lastAttempt) < retryDelay) continue;
+    lastAttempt = now;
+    if (session.needsAuthentication()) {
+      // Cierra la conexión TLS de la base de datos antes de abrir la de autenticación.
+      client.stop();
+    }
+    if (!session.ready()) {
+      retryDelay = min(uint32_t(30000), max(uint32_t(5000), retryDelay * 2));
+      continue;
+    }
+
+    // Toma la muestra después de autenticar, pues puede tardar. No acumula mediciones sin conexión.
+    const thalos::ThermalSnapshot snapshot = readSnapshot();
+    now = millis();
+    const bool fresh = thalos::hasNewFreshThermalReading(snapshot, now, hasPublished, lastPublishedSequence);
+    if (!fresh && uint32_t(now - lastHeartbeat) < kHeartbeatIntervalMs) continue;
+
+    JsonDocument patch;
+    const bool includesThermal = thalos::buildThermalDevicePatch(patch, snapshot, now, hasPublished,
+                                                       lastPublishedSequence, WiFi.RSSI());
+    String payload;
+    serializeJson(patch, payload);
+    const String url = String(kFirebaseDatabaseUrl) + "/telemetry/devices/" + kDeviceId +
+                       ".json?print=silent&auth=" + encodeQuery(session.idToken());
+    if (!http.begin(client, url)) {
+      retryDelay = 5000;
+      continue;
+    }
+    http.addHeader("Content-Type", "application/json");
+    const int code = http.PATCH(payload);
+    if (code == HTTP_CODE_OK || code == HTTP_CODE_NO_CONTENT) {
+      lastHeartbeat = millis();
+      retryDelay = kPublishIntervalMs;
+      if (includesThermal) {
+        hasPublished = true;
+        lastPublishedSequence = snapshot.sequence;
+      }
+      if (uint32_t(millis() - lastLog) >= 5000) {
+        lastLog = millis();
+        if (includesThermal) {
+          Serial.printf("Firebase OK | cuadro termico=%lu | 64 pixeles | HTTP=%d\n",
+                        static_cast<unsigned long>(snapshot.sequence), code);
+        } else {
+          Serial.println("Firebase OK | ESP32 activa, sin nueva matriz termica vigente.");
+        }
+      }
+    } else {
+      // Los errores de permisos también usan 401. No repetir el inicio de sesión si fallan las reglas.
+      const String response = code > 0 ? http.getString() : String();
+      if (code == 401 && (response.indexOf("expired") >= 0 || response.indexOf("Invalid auth") >= 0)) {
+        session.expireToken();
+      }
+      Serial.printf("Firebase: envio no completado (HTTP %d). Revisar reglas/red; se reintentara.\n", code);
+      retryDelay = min(uint32_t(30000), max(uint32_t(5000), retryDelay * 2));
+    }
+    http.end();
+  }
+}
+
+void setup() {
+  Serial.begin(115200, SERIAL_8N1);
+  NucleoSerial.setRxBufferSize(4096);
+  NucleoSerial.begin(115200, SERIAL_8N1, kNucleoRxPin, kNucleoTxPin);
+  Serial.println("\nTHALOS | NUCLEO UART5 -> ESP32 UART2 -> Firebase | AMG8831");
+  if (!kThalosConfigReady) {
+    Serial.println("COMPILACION DE COMPROBACION: WiFi desactivado. Completa firmware/.env.local y recompila.");
+    return;
+  }
+  // HTTPS en el nucleo 0; Arduino sigue recibiendo los cuadros en el nucleo 1.
+  if (xTaskCreatePinnedToCore(uploadTask, "thermal-upload", 16384, nullptr, 1, nullptr, 0) != pdPASS) {
+    Serial.println("No fue posible iniciar WiFi: memoria insuficiente.");
+  }
+}
+
+void loop() {
+  static uint32_t sequence = 0;
+  static uint32_t lastPrintAt = 0;
+  using Result = thalos::ThermalFrameParser::Result;
+  if (parser.expire(millis())) Serial.println("UART2: matriz incompleta descartada por tiempo de espera.");
+  for (size_t count = 0; count < 2048 && NucleoSerial.available() > 0; ++count) {
+    const int value = NucleoSerial.read();
+    if (value < 0) break;
+    const Result result = parser.push(static_cast<uint8_t>(value), millis());
+    if (result == Result::FrameReady) {
+      thalos::ThermalSnapshot snapshot;
+      memcpy(snapshot.pixels, parser.temperatures(), sizeof(snapshot.pixels));
+      snapshot.sequence = ++sequence;
+      snapshot.receivedAtMs = millis();
+      snapshot.capturedAtUnixMs = unixMilliseconds();
+      snapshot.hasReading = true;
+      portENTER_CRITICAL(&snapshotMux);
+      latest = snapshot;
+      portEXIT_CRITICAL(&snapshotMux);
+    } else if (result == Result::Rejected) {
+      Serial.println("UART2: matriz incompleta o invalida descartada.");
+    }
+  }
+  const uint32_t now = millis();
+  if (uint32_t(now - lastPrintAt) >= 2000) {
+    lastPrintAt = now;
+    const auto snapshot = readSnapshot();
+    if (snapshot.hasReading && uint32_t(now - snapshot.receivedAtMs) <= 3000) {
+      Serial.printf("Termica UART | cuadro=%lu | 64 pixeles | descartados=%lu\n",
+                    static_cast<unsigned long>(snapshot.sequence),
+                    static_cast<unsigned long>(parser.invalidFrames()));
+    } else {
+      Serial.println("Termica UART | SIN CUADROS VIGENTES; se conserva la hora de la ultima lectura.");
+    }
+  }
+  delay(1);
+}
